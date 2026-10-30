@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { CardState } from './leitner';
 import { InMemoryReviewRepository, ReviewRepository } from './review.repository';
 import { ReviewService } from './review.service';
-import { TODAY } from './today';
+import { NOW, TODAY } from './today';
 
 describe('ReviewService', () => {
   let repository: InMemoryReviewRepository;
@@ -14,6 +14,7 @@ describe('ReviewService', () => {
       providers: [
         { provide: ReviewRepository, useValue: repository },
         { provide: TODAY, useValue: () => today },
+        { provide: NOW, useValue: () => '2026-10-30T10:00:00.000Z' },
       ],
     });
     const service = TestBed.inject(ReviewService);
@@ -37,9 +38,9 @@ describe('ReviewService', () => {
     await service.recordFirstAnswer('dd', 'self-assessed');
 
     expect(await repository.load()).toEqual([
-      { questionId: 'ok', box: 2, due: '2026-11-01' },
-      { questionId: 'ko', box: 1, due: '2026-10-31' },
-      { questionId: 'dd', box: 1, due: '2026-10-31' },
+      { questionId: 'ok', box: 2, due: '2026-11-01', updatedAt: '2026-10-30T10:00:00.000Z' },
+      { questionId: 'ko', box: 1, due: '2026-10-31', updatedAt: '2026-10-30T10:00:00.000Z' },
+      { questionId: 'dd', box: 1, due: '2026-10-31', updatedAt: '2026-10-30T10:00:00.000Z' },
     ]);
   });
 
@@ -57,7 +58,9 @@ describe('ReviewService', () => {
     await service.rate('q1', 'easy');
 
     expect(service.due()).toEqual([]);
-    expect(await repository.load()).toEqual([{ questionId: 'q1', box: 2, due: '2026-11-01' }]);
+    expect(await repository.load()).toEqual([
+      { questionId: 'q1', box: 2, due: '2026-11-01', updatedAt: '2026-10-30T10:00:00.000Z' },
+    ]);
   });
 
   it('shows cards again once their day arrives', async () => {
@@ -69,5 +72,34 @@ describe('ReviewService', () => {
     service.refreshToday();
 
     expect(service.due().map((c) => c.questionId)).toEqual(['q1']);
+  });
+
+  it("counts local changes so sync knows when to upload", async () => {
+    const service = await create();
+    const before = service.localChanges();
+
+    await service.recordFirstAnswer("q1", "correct");
+    await service.rate("q1", "easy");
+
+    expect(service.localChanges()).toBe(before + 2);
+  });
+
+  it("applies cards from the server without counting them as local changes", async () => {
+    const service = await create([{ questionId: "q1", box: 1, due: "2026-10-30" }]);
+    const before = service.localChanges();
+    const remote = { questionId: "q1", box: 3, due: "2026-11-02", updatedAt: "2026-10-30T11:00:00.000Z" };
+
+    await service.applyRemote([remote]);
+
+    expect(service.localChanges()).toBe(before);
+    expect(service.due()).toEqual([]);
+    expect(await repository.load()).toEqual([remote]);
+  });
+
+  it("exposes every stored card for sync", async () => {
+    const stored = [{ questionId: "q1", box: 2, due: "2026-11-01" }];
+    const service = await create(stored);
+
+    expect(service.allCards()).toEqual(stored);
   });
 });

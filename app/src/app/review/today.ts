@@ -6,3 +6,9 @@ export const TODAY = new InjectionToken<() => string>('TODAY', {
   providedIn: 'root',
   factory: () => () => localDate(),
 });
+
+/** Current instant (ISO 8601). Stamps changes so devices can tell which version is newer. */
+export const NOW = new InjectionToken<() => string>('NOW', {
+  providedIn: 'root',
+  factory: () => () => new Date().toISOString(),
+});

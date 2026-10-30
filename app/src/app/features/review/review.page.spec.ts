@@ -83,7 +83,7 @@ describe('ReviewPage', () => {
     await click(el, 'Fácil');
 
     expect(el.textContent).toContain('Pregunta dos');
-    expect((await repository.load()).find((c) => c.questionId === 'q1')).toEqual({
+    expect((await repository.load()).find((c) => c.questionId === 'q1')).toMatchObject({
       questionId: 'q1',
       box: 2,
       due: '2026-11-01',
@@ -97,7 +97,7 @@ describe('ReviewPage', () => {
     expect(Array.from(el.querySelectorAll('.rating button')).map((b) => b.textContent?.trim())).toEqual(['Siguiente']);
     await click(el, 'Siguiente');
 
-    expect(await repository.load()).toEqual([{ questionId: 'q1', box: 1, due: '2026-10-31' }]);
+    expect(await repository.load()).toMatchObject([{ questionId: 'q1', box: 1, due: '2026-10-31' }]);
     expect(el.textContent).toContain('No tienes preguntas pendientes');
   });
 

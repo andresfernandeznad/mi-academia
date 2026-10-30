@@ -77,6 +77,14 @@ describe('App', () => {
     expect(reloads).toBe(1);
   });
 
+  it('links to the account page from the header', async () => {
+    const fixture = TestBed.createComponent(App);
+    await fixture.whenStable();
+    const link = (fixture.nativeElement as HTMLElement).querySelector('header a[href="/cuenta"]');
+
+    expect(link?.getAttribute('aria-label')).toBe('Cuenta y sincronización');
+  });
+
   it('hosts the router outlet inside main', () => {
     const fixture = TestBed.createComponent(App);
     const main = (fixture.nativeElement as HTMLElement).querySelector('main');

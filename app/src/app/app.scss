@@ -48,6 +48,7 @@
 }
 
 .review-link,
+.icon-link,
 .theme-toggle {
   display: inline-flex;
   align-items: center;
@@ -69,7 +70,8 @@
   }
 }
 
-.review-link.is-active {
+.review-link.is-active,
+.icon-link.is-active {
   border-color: var(--border-strong);
 }
 
@@ -85,6 +87,7 @@
   font-variant-numeric: tabular-nums;
 }
 
+.icon-link svg,
 .theme-toggle svg {
   width: 20px;
   height: 20px;

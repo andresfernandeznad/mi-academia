@@ -2,6 +2,7 @@ import { Component, computed, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { ReviewService } from './review/review.service';
 import { ThemePreference, ThemeService } from './theme/theme.service';
+import { SyncService } from './sync/sync.service';
 import { UpdateService } from './update/update.service';
 
 const THEME_NAMES: Record<ThemePreference, string> = { system: 'sistema', light: 'claro', dark: 'noche' };
@@ -20,6 +21,8 @@ const NEXT_THEME: Record<ThemePreference, ThemePreference> = { system: 'light', 
 export class App {
   protected readonly reviews = inject(ReviewService);
   protected readonly updates = inject(UpdateService);
+  /** Injected here so sync starts with the app, not when the account page is first opened. */
+  private readonly sync = inject(SyncService);
   protected readonly theme = inject(ThemeService);
   protected readonly dueCount = computed(() => this.reviews.due().length);
 
@@ -33,5 +36,6 @@ export class App {
     if (document.visibilityState !== 'visible') return;
     this.reviews.refreshToday();
     void this.updates.check();
+    this.sync.syncSoon();
   }
 }

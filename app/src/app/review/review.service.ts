@@ -2,7 +2,7 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import { Grade } from '../quiz/grading';
 import { CardState, Rating, dueCards, review } from './leitner';
 import { ReviewRepository } from './review.repository';
-import { TODAY } from './today';
+import { NOW, TODAY } from './today';
 
 /** How a first answer inside a lesson maps to a Leitner rating. */
 const FIRST_RATING: Record<Grade, Rating> = {
@@ -15,11 +15,16 @@ const FIRST_RATING: Record<Grade, Rating> = {
 export class ReviewService {
   private readonly repository = inject(ReviewRepository);
   private readonly clock = inject(TODAY);
+  private readonly now = inject(NOW);
 
   private readonly cards = signal<ReadonlyMap<string, CardState>>(new Map());
   private readonly today = signal(this.clock());
 
   readonly due = computed(() => dueCards([...this.cards().values()], this.today()));
+  readonly allCards = computed(() => [...this.cards().values()]);
+
+  /** Bumps on every change made on this device (not on cards applied from the server). */
+  readonly localChanges = signal(0);
 
   /** Resolves once stored progress is loaded; writes wait for it so they never overwrite unseen cards. */
   readonly ready: Promise<void> = this.repository.load().then((cards) => {
@@ -35,12 +40,23 @@ export class ReviewService {
   async recordFirstAnswer(questionId: string, grade: Grade): Promise<void> {
     await this.ready;
     if (this.cards().has(questionId)) return;
-    await this.store(review(undefined, FIRST_RATING[grade], questionId, this.clock()));
+    await this.storeLocalChange(review(undefined, FIRST_RATING[grade], questionId, this.clock()));
   }
 
   async rate(questionId: string, rating: Rating): Promise<void> {
     await this.ready;
-    await this.store(review(this.cards().get(questionId), rating, questionId, this.clock()));
+    await this.storeLocalChange(review(this.cards().get(questionId), rating, questionId, this.clock()));
+  }
+
+  /** Newer cards from another device. Not a local change, or every download would trigger an upload. */
+  async applyRemote(cards: readonly CardState[]): Promise<void> {
+    await this.ready;
+    for (const card of cards) await this.store(card);
+  }
+
+  private async storeLocalChange(card: CardState): Promise<void> {
+    await this.store({ ...card, updatedAt: this.now() });
+    this.localChanges.update((n) => n + 1);
   }
 
   private async store(card: CardState): Promise<void> {

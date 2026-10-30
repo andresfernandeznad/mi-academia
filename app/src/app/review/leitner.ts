@@ -12,6 +12,11 @@ export interface CardState {
   box: number;
   /** Local calendar day ("YYYY-MM-DD") on which the card is due. */
   due: string;
+  /**
+   * Instant of the last change (ISO 8601), used to resolve sync conflicts between devices.
+   * Missing on cards saved before sync existed; those count as the oldest.
+   */
+  updatedAt?: string;
 }
 
 const INTERVALS = [1, 2, 4, 8, 16];
