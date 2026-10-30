@@ -1,12 +1,13 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { marked } from 'marked';
-import type { ContentIndex, Lesson, ModuleSummary, Phase } from '../../src/app/content/content.model.ts';
+import type { ContentIndex, Lesson, ModuleSummary, Phase, ReviewQuestion } from '../../src/app/content/content.model.ts';
 import { parseLesson, validateQuestions } from './validators.ts';
 
 export interface CompiledContent {
   index: ContentIndex;
   lessons: Lesson[];
+  questions: ReviewQuestion[];
   errors: string[];
 }
 
@@ -44,7 +45,7 @@ export function compileContent(contentDir: string): CompiledContent {
   const roadmap = readJson('roadmap.json') as { title?: string; phases?: RoadmapPhase[] } | undefined;
   if (!roadmap || typeof roadmap.title !== 'string' || !Array.isArray(roadmap.phases)) {
     if (roadmap) errors.push('roadmap.json: needs a title and a phases array');
-    return { index: { title: '', phases: [] }, lessons, errors };
+    return { index: { title: '', phases: [] }, lessons, questions: [], errors };
   }
 
   const compileModule = (entry: RoadmapModule): ModuleSummary => {
@@ -104,5 +105,9 @@ export function compileContent(contentDir: string): CompiledContent {
     modules: phase.modules.map(compileModule),
   }));
 
-  return { index: { title: roadmap.title, phases }, lessons, errors };
+  const questions = lessons.flatMap((lesson) =>
+    lesson.questions.map((q) => ({ ...q, moduleId: lesson.moduleId, lessonId: lesson.id, lessonTitle: lesson.title })),
+  );
+
+  return { index: { title: roadmap.title, phases }, lessons, questions, errors };
 }

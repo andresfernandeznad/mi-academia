@@ -1,5 +1,11 @@
 <header class="app-header">
   <a routerLink="/" class="brand">Mi Academia</a>
+  <a routerLink="/repaso" class="review-link">
+    Repaso
+    @if (dueCount() > 0) {
+      <span class="badge" [attr.aria-label]="dueCount() + ' pendientes'">{{ dueCount() }}</span>
+    }
+  </a>
 </header>
 <main class="app-main">
   <router-outlet />

@@ -42,6 +42,15 @@ describe('LessonQuiz', () => {
     expect(el.querySelector('.summary')?.textContent).toContain('1 de autoevaluación');
   });
 
+  it('re-emits every answer so the page can feed the review', async () => {
+    const answers: unknown[] = [];
+    fixture.componentInstance.answered.subscribe((a) => answers.push(a));
+
+    await click('No');
+
+    expect(answers).toEqual([{ questionId: 'q1', grade: 'incorrect' }]);
+  });
+
   it('renders nothing when the lesson has no questions', async () => {
     fixture.componentRef.setInput('questions', []);
     await fixture.whenStable();

@@ -4,11 +4,13 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { indexFixture, lessonFixture } from '../../content/content.fixtures';
+import { InMemoryReviewRepository, ReviewRepository } from '../../review/review.repository';
 import { LessonPage } from './lesson.page';
 
 describe('LessonPage', () => {
   let harness: RouterTestingHarness;
   let http: HttpTestingController;
+  let repository: InMemoryReviewRepository;
 
   const open = async (moduleId: string, lessonId: string) => {
     harness = await RouterTestingHarness.create(`/m/${moduleId}/${lessonId}`);
@@ -19,8 +21,10 @@ describe('LessonPage', () => {
   };
 
   beforeEach(() => {
+    repository = new InMemoryReviewRepository();
     TestBed.configureTestingModule({
       providers: [
+        { provide: ReviewRepository, useValue: repository },
         provideRouter([{ path: 'm/:moduleId/:lessonId', component: LessonPage }], withComponentInputBinding()),
         provideHttpClient(),
         provideHttpClientTesting(),
@@ -44,6 +48,16 @@ describe('LessonPage', () => {
     const page = await open('curso-0-java', 'java-hoy');
 
     expect(page.querySelectorAll('app-lesson-quiz app-question-card').length).toBe(lessonFixture.questions.length);
+  });
+
+  it('adds the first answer of each question to the daily review', async () => {
+    const page = await open('curso-0-java', 'java-hoy');
+
+    (page.querySelector('button[aria-label="Línea 2"]') as HTMLButtonElement).click();
+    await harness.fixture.whenStable();
+
+    const cards = await repository.load();
+    expect(cards.map((c) => [c.questionId, c.box])).toEqual([['java-hoy-2', 2]]);
   });
 
   it('links back to the module and to the next lesson only on the first lesson', async () => {

@@ -7,7 +7,7 @@ import { compileContent } from './content/compile-content.ts';
 const contentDir = resolve(import.meta.dirname, '../../content');
 const outDir = resolve(import.meta.dirname, '../generated/content');
 
-const { index, lessons, errors } = compileContent(contentDir);
+const { index, lessons, questions, errors } = compileContent(contentDir);
 
 if (errors.length > 0) {
   console.error(`Content has ${errors.length} error(s) in ${contentDir}:`);
@@ -18,6 +18,7 @@ if (errors.length > 0) {
 rmSync(outDir, { recursive: true, force: true });
 mkdirSync(outDir, { recursive: true });
 writeFileSync(join(outDir, 'index.json'), JSON.stringify(index));
+writeFileSync(join(outDir, 'questions.json'), JSON.stringify(questions));
 for (const lesson of lessons) {
   const moduleDir = join(outDir, lesson.moduleId);
   mkdirSync(moduleDir, { recursive: true });

@@ -63,6 +63,13 @@ export interface Phase {
   modules: ModuleSummary[];
 }
 
+/** A question plus where it comes from. Compiled to /content/questions.json for the daily review. */
+export type ReviewQuestion = Question & {
+  moduleId: string;
+  lessonId: string;
+  lessonTitle: string;
+};
+
 /** Compiled to /content/index.json. */
 export interface ContentIndex {
   title: string;

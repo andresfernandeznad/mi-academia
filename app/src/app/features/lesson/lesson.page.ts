@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, input } from '@an
 import { RouterLink } from '@angular/router';
 import { ContentService } from '../../content/content.service';
 import { LessonQuiz } from '../../quiz/lesson-quiz';
+import { ReviewService } from '../../review/review.service';
 
 @Component({
   selector: 'app-lesson-page',
@@ -19,7 +20,7 @@ import { LessonQuiz } from '../../quiz/lesson-quiz';
       </header>
       <!-- Trusted HTML rendered from our own Markdown at build time; Angular still sanitizes it. -->
       <article class="prose" [innerHTML]="lesson.html"></article>
-      <app-lesson-quiz [questions]="lesson.questions" />
+      <app-lesson-quiz [questions]="lesson.questions" (answered)="reviews.recordFirstAnswer($event.questionId, $event.grade)" />
       <nav class="pager">
         <a [routerLink]="['/m', moduleId()]">← Módulo</a>
         @if (previous(); as previous) {
@@ -40,6 +41,7 @@ export class LessonPage {
   readonly lessonId = input.required<string>();
 
   private readonly content = inject(ContentService);
+  protected readonly reviews = inject(ReviewService);
   protected readonly lesson = this.content.lesson(this.moduleId, this.lessonId);
 
   private readonly module = this.content.module(this.moduleId);

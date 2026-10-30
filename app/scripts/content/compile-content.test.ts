@@ -92,6 +92,16 @@ describe('compileContent', () => {
     assert.equal(lessons[0].questions.length, 3);
   });
 
+  it('collects every question with its lesson for the daily review', () => {
+    const { questions } = compileContent(dir);
+
+    assert.equal(questions.length, 6);
+    assert.deepEqual(
+      { id: questions[3].id, moduleId: questions[3].moduleId, lessonId: questions[3].lessonId, lessonTitle: questions[3].lessonTitle },
+      { id: 'tipos-1', moduleId: 'curso-0-java', lessonId: 'tipos', lessonTitle: 'Lección tipos' },
+    );
+  });
+
   it('renders the lesson Markdown to HTML at build time', () => {
     write(
       'curso-0-java/lessons/01-java-hoy.md',

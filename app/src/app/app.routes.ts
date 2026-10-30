@@ -7,5 +7,6 @@ export const routes: Routes = [
     path: 'm/:moduleId/:lessonId',
     loadComponent: () => import('./features/lesson/lesson.page').then((m) => m.LessonPage),
   },
+  { path: 'repaso', loadComponent: () => import('./features/review/review.page').then((m) => m.ReviewPage) },
   { path: '**', redirectTo: '' },
 ];

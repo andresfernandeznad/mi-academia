@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input, linkedSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, linkedSignal, output } from '@angular/core';
 import { Question } from '../content/content.model';
 import { Grade } from './grading';
 import { QuestionAnswer, QuestionCard } from './question-card';
@@ -31,6 +31,7 @@ import { QuestionAnswer, QuestionCard } from './question-card';
 })
 export class LessonQuiz {
   readonly questions = input.required<Question[]>();
+  readonly answered = output<QuestionAnswer>();
 
   /** Grades by question id; starts empty again whenever the lesson changes. */
   private readonly grades = linkedSignal<Question[], Record<string, Grade>>({
@@ -51,7 +52,8 @@ export class LessonQuiz {
     };
   });
 
-  protected record({ questionId, grade }: QuestionAnswer): void {
-    this.grades.update((grades) => ({ ...grades, [questionId]: grade }));
+  protected record(answer: QuestionAnswer): void {
+    this.grades.update((grades) => ({ ...grades, [answer.questionId]: answer.grade }));
+    this.answered.emit(answer);
   }
 }
