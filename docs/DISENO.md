@@ -2,6 +2,8 @@
 
 Versión del 30 de octubre de 2026. Documento original: https://claude.ai/artifact/DtpzLxscy2LRTSA3TAdpog
 
+> **Estado (31/10/2026):** el MVP está construido y el Curso 0 publicado. El estado de la app y las siguientes features están en [ROADMAP.md](ROADMAP.md), y cómo está construida en [ARQUITECTURA.md](ARQUITECTURA.md). Desviación respecto a este documento: los proyectos Java usan JUnit 6, que es el sucesor de JUnit 5 con el mismo API.
+
 ## Objetivo y perfil destino
 
 El roadmap 1 te lleva de full stack Java + Angular a **full stack con criterio de arquitecto que integra IA en productos de negocio**. No se trata de cambiar de stack, sino de añadir encima tres capas que la IA no sustituye con facilidad.
