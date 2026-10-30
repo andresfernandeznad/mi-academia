@@ -1,11 +1,17 @@
 import { Injectable } from '@angular/core';
+import { IndexedDbReviewRepository } from './indexed-db-review.repository';
 import { CardState } from './leitner';
 
 /**
  * Port for review progress. The abstract class doubles as the DI token, so the storage
- * (memory today, IndexedDB + Supabase later) changes without touching the review logic.
+ * (IndexedDB now, plus Supabase sync later) changes without touching the review logic.
+ * Falls back to memory where IndexedDB does not exist (jsdom in unit tests).
  */
-@Injectable({ providedIn: 'root', useFactory: () => new InMemoryReviewRepository() })
+@Injectable({
+  providedIn: 'root',
+  useFactory: () =>
+    typeof indexedDB !== 'undefined' ? new IndexedDbReviewRepository() : new InMemoryReviewRepository(),
+})
 export abstract class ReviewRepository {
   abstract load(): Promise<CardState[]>;
   abstract save(card: CardState): Promise<void>;
