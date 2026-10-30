@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ContentService } from '../../content/content.service';
+import { LessonQuiz } from '../../quiz/lesson-quiz';
 
 @Component({
   selector: 'app-lesson-page',
-  imports: [RouterLink],
+  imports: [RouterLink, LessonQuiz],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './lesson.page.scss',
   template: `
@@ -18,6 +19,7 @@ import { ContentService } from '../../content/content.service';
       </header>
       <!-- Trusted HTML rendered from our own Markdown at build time; Angular still sanitizes it. -->
       <article class="prose" [innerHTML]="lesson.html"></article>
+      <app-lesson-quiz [questions]="lesson.questions" />
       <nav class="pager">
         <a [routerLink]="['/m', moduleId()]">← Módulo</a>
         @if (previous(); as previous) {

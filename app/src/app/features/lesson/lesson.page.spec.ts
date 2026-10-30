@@ -40,6 +40,12 @@ describe('LessonPage', () => {
     expect(page.querySelector('article pre code')?.textContent).toBe('int a = 1;');
   });
 
+  it('ends the lesson with its questions', async () => {
+    const page = await open('curso-0-java', 'java-hoy');
+
+    expect(page.querySelectorAll('app-lesson-quiz app-question-card').length).toBe(lessonFixture.questions.length);
+  });
+
   it('links back to the module and to the next lesson only on the first lesson', async () => {
     const page = await open('curso-0-java', 'java-hoy');
 

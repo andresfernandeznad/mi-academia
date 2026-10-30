@@ -1,0 +1,104 @@
+:host {
+  display: block;
+}
+
+.prompt {
+  font-weight: 600;
+  margin: 0 0 0.75rem;
+}
+
+pre {
+  overflow-x: auto;
+  padding: 0.75rem 1rem;
+  background: var(--color-code-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  font-size: 0.8125rem;
+}
+
+button {
+  width: 100%;
+  min-height: 2.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  background: var(--color-surface);
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+
+  &:disabled {
+    cursor: default;
+  }
+
+  &.is-answer {
+    border-color: var(--color-correct);
+    background: var(--color-correct-bg);
+  }
+
+  &.is-wrong {
+    border-color: var(--color-incorrect);
+    background: var(--color-incorrect-bg);
+  }
+
+  &.is-chosen {
+    border-color: var(--color-link);
+  }
+}
+
+.options {
+  display: grid;
+  gap: 0.5rem;
+
+  button {
+    padding: 0.625rem 0.875rem;
+  }
+}
+
+// Each code line is its own tap target; the block scrolls sideways instead of wrapping code.
+.code-lines {
+  display: grid;
+  gap: 2px;
+  overflow-x: auto;
+
+  button {
+    display: flex;
+    gap: 0.75rem;
+    min-height: 2.25rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.25rem;
+    font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
+    font-size: 0.8125rem;
+  }
+
+  .line-number {
+    min-width: 1.5ch;
+    color: var(--color-muted);
+    text-align: right;
+  }
+
+  code {
+    white-space: pre;
+  }
+}
+
+.feedback:not(:empty) {
+  margin-top: 0.75rem;
+}
+
+.verdict {
+  font-weight: 600;
+  margin: 0;
+
+  &.correct {
+    color: var(--color-correct);
+  }
+
+  &.incorrect {
+    color: var(--color-incorrect);
+  }
+}
+
+.explanation {
+  margin: 0.25rem 0 0;
+}

@@ -35,5 +35,8 @@ export const lessonFixture: Lesson = {
   minutes: 8,
   sources: ['https://dev.java/learn/'],
   html: '<h2>Por qué importa</h2><p>Texto de la lección.</p><pre><code class="language-java">int a = 1;</code></pre>',
-  questions: [],
+  questions: [
+    { id: 'java-hoy-1', type: 'quiz', prompt: '¿JShell?', options: ['REPL', 'IDE'], answer: 0, explanation: '.' },
+    { id: 'java-hoy-2', type: 'find-the-bug', prompt: '¿Línea?', code: 'a\nb', answer: 2, explanation: '.' },
+  ],
 };
