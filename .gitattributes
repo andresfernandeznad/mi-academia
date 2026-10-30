@@ -1,0 +1,4 @@
+# Keep LF everywhere: skill checksums and the content parser expect it, regardless of core.autocrlf.
+* text=auto eol=lf
+*.png binary
+*.ico binary
