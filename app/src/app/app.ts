@@ -2,6 +2,7 @@ import { Component, computed, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { ReviewService } from './review/review.service';
 import { ThemePreference, ThemeService } from './theme/theme.service';
+import { UpdateService } from './update/update.service';
 
 const THEME_NAMES: Record<ThemePreference, string> = { system: 'sistema', light: 'claro', dark: 'noche' };
 const NEXT_THEME: Record<ThemePreference, ThemePreference> = { system: 'light', light: 'dark', dark: 'system' };
@@ -12,12 +13,13 @@ const NEXT_THEME: Record<ThemePreference, ThemePreference> = { system: 'light', 
   styleUrl: './app.scss',
   templateUrl: './app.html',
   host: {
-    // An installed PWA can stay open across midnight; recheck the day when it comes back.
-    '(document:visibilitychange)': 'reviews.refreshToday()',
+    // An installed PWA can stay open for days: when it comes back, recheck the day and the deploy.
+    '(document:visibilitychange)': 'onVisible()',
   },
 })
 export class App {
   protected readonly reviews = inject(ReviewService);
+  protected readonly updates = inject(UpdateService);
   protected readonly theme = inject(ThemeService);
   protected readonly dueCount = computed(() => this.reviews.due().length);
 
@@ -26,4 +28,10 @@ export class App {
     const current = this.theme.preference();
     return `Tema: ${THEME_NAMES[current]}. Cambiar a ${THEME_NAMES[NEXT_THEME[current]]}`;
   });
+
+  protected onVisible(): void {
+    if (document.visibilityState !== 'visible') return;
+    this.reviews.refreshToday();
+    void this.updates.check();
+  }
 }

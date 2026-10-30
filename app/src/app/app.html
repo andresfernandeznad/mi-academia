@@ -25,3 +25,9 @@
 <main class="app-main">
   <router-outlet />
 </main>
+@if (updates.available()) {
+  <div class="update-banner" role="status">
+    <span>Hay una versión nueva de Mi Academia.</span>
+    <button type="button" class="button primary" (click)="updates.reload()">Recargar</button>
+  </div>
+}

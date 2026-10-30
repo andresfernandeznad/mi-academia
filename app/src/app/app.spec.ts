@@ -4,6 +4,7 @@ import { App } from './app';
 import { InMemoryReviewRepository, ReviewRepository } from './review/review.repository';
 import { ReviewService } from './review/review.service';
 import { TODAY } from './review/today';
+import { UpdateService } from './update/update.service';
 
 describe('App', () => {
   beforeEach(async () => {
@@ -56,6 +57,24 @@ describe('App', () => {
     await fixture.whenStable();
     expect(toggle().getAttribute('aria-label')).toBe('Tema: noche. Cambiar a sistema');
     expect(document.documentElement.dataset['theme']).toBe('dark');
+  });
+
+  it('offers a reload only when a new version is ready', async () => {
+    const updates = TestBed.inject(UpdateService);
+    let reloads = 0;
+    updates.reload = () => reloads++;
+    const fixture = TestBed.createComponent(App);
+    await fixture.whenStable();
+    const banner = () => (fixture.nativeElement as HTMLElement).querySelector('.update-banner');
+    expect(banner()).toBeNull();
+
+    updates.available.set(true);
+    await fixture.whenStable();
+    expect(banner()?.getAttribute('role')).toBe('status');
+    expect(banner()?.textContent).toContain('Hay una versión nueva');
+    (banner()!.querySelector('button') as HTMLButtonElement).click();
+
+    expect(reloads).toBe(1);
   });
 
   it('hosts the router outlet inside main', () => {

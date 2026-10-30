@@ -94,6 +94,23 @@
   stroke-linecap: square;
 }
 
+// Pinned to the bottom so it never covers the header or the reading column's first lines.
+.update-banner {
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  padding: 12px var(--gutter) calc(12px + env(safe-area-inset-bottom));
+  background: var(--surface);
+  border-top: 2px solid var(--ink);
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+}
+
 .app-main {
   flex: 1;
   width: 100%;
