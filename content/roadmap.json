@@ -1,0 +1,46 @@
+{
+  "title": "Full stack con criterio de arquitecto e IA",
+  "phases": [
+    {
+      "id": "arranque",
+      "title": "0. Arranque",
+      "modules": [{ "id": "curso-0-java", "title": "Java esencial", "hours": 15 }]
+    },
+    {
+      "id": "fundamentos",
+      "title": "1. Fundamentos",
+      "modules": [
+        { "id": "http-apis", "title": "HTTP y APIs a fondo", "hours": 15 },
+        { "id": "bases-de-datos", "title": "Bases de datos", "hours": 20 },
+        { "id": "concurrencia-jvm", "title": "Concurrencia y JVM", "hours": 15 },
+        { "id": "seguridad-web", "title": "Seguridad web", "hours": 15 }
+      ]
+    },
+    {
+      "id": "full-stack",
+      "title": "2. Full stack actual",
+      "modules": [
+        { "id": "angular-moderno", "title": "Angular moderno", "hours": 15 },
+        { "id": "tests", "title": "Tests de verdad", "hours": 20 },
+        { "id": "observabilidad-despliegue", "title": "Observabilidad y despliegue", "hours": 15 }
+      ]
+    },
+    {
+      "id": "diseno-sistemas",
+      "title": "3. Diseño de sistemas",
+      "modules": [
+        { "id": "arquitectura-dominio", "title": "Arquitectura y dominio", "hours": 20 },
+        { "id": "escalabilidad-mensajeria", "title": "Escalabilidad y mensajería", "hours": 20 }
+      ]
+    },
+    {
+      "id": "producto-ia",
+      "title": "4. Producto con IA",
+      "modules": [
+        { "id": "llms-ingenieros", "title": "LLMs para ingenieros", "hours": 20 },
+        { "id": "rag-herramientas", "title": "RAG y herramientas", "hours": 25 },
+        { "id": "evaluacion-produccion", "title": "Evaluación y producción", "hours": 20 }
+      ]
+    }
+  ]
+}

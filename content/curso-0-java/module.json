@@ -1,0 +1,5 @@
+{
+  "id": "curso-0-java",
+  "description": "Repaso rápido de Java moderno tomando Java 25 (LTS) como referencia: de lo que ya usas a lo que añadieron las últimas versiones.",
+  "lessons": ["01-java-hoy"]
+}

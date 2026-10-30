@@ -1,0 +1,35 @@
+[
+  {
+    "id": "java-hoy-1",
+    "type": "quiz",
+    "prompt": "Compilas con JDK 25 y producción ejecuta Java 21. ¿Qué configuración de Maven hace que el build falle si usas una API que solo existe en Java 25?",
+    "options": [
+      "maven.compiler.release = 21",
+      "maven.compiler.source = 21 y maven.compiler.target = 21",
+      "Cambiar JAVA_HOME en el servidor de producción",
+      "Ninguna: el compilador siempre lo detecta"
+    ],
+    "answer": 0,
+    "explanation": "release (la opción --release de javac) compila contra la API de la plataforma indicada. source/target solo fijan el nivel del lenguaje y del bytecode; la API sigue siendo la del JDK con el que compilas."
+  },
+  {
+    "id": "java-hoy-2",
+    "type": "find-the-bug",
+    "prompt": "Este proyecto Maven compila, pero mvn test no ejecuta ningún test. ¿Qué línea está mal?",
+    "code": "mi-cli/\n  pom.xml\n  src/main/java/tickets/App.java\n  src/main/test/tickets/AppTest.java",
+    "answer": 4,
+    "explanation": "Por convención, Maven busca los tests en src/test/java. En src/main/test el fichero no se compila como test, así que Surefire no encuentra nada que ejecutar."
+  },
+  {
+    "id": "java-hoy-3",
+    "type": "design-decision",
+    "prompt": "Quieres comprobar cómo se comporta String.split con una línea de CSV que tiene campos vacíos al final. ¿Qué usas?",
+    "options": [
+      "JShell",
+      "Un fichero suelto ejecutado con java Main.java",
+      "Un proyecto Maven con un test"
+    ],
+    "answer": 0,
+    "explanation": "Para explorar una API, JShell da la respuesta en segundos sin crear nada. Cuando ese comportamiento importe para tu código (por ejemplo, en la CLI de tickets), fíjalo con un test en el proyecto Maven."
+  }
+]

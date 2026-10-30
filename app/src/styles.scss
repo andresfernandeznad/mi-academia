@@ -1,0 +1,32 @@
+// Mobile first: base styles target phones; wider screens only widen the reading column.
+:root {
+  --color-primary: #1f3a5f;
+  --color-on-primary: #ffffff;
+  --color-bg: #ffffff;
+  --color-text: #1b1b1f;
+  --color-muted: #5f6368;
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #121418;
+    --color-text: #e6e6ea;
+    --color-muted: #a0a4ab;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  background: var(--color-bg);
+  color: var(--color-text);
+}
