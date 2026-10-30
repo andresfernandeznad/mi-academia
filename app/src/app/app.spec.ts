@@ -4,6 +4,7 @@ import { App } from './app';
 import { InMemoryReviewRepository, ReviewRepository } from './review/review.repository';
 import { ReviewService } from './review/review.service';
 import { TODAY } from './review/today';
+import { SUPABASE_CONFIG } from './sync/supabase.config';
 import { UpdateService } from './update/update.service';
 
 describe('App', () => {
@@ -20,6 +21,8 @@ describe('App', () => {
           ]),
         },
         { provide: TODAY, useValue: () => '2026-10-30' },
+        // Keep unit tests off the real Supabase project.
+        { provide: SUPABASE_CONFIG, useValue: { url: '', anonKey: '' } },
       ],
     }).compileComponents();
     await TestBed.inject(ReviewService).ready;

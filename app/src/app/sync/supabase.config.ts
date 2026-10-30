@@ -13,7 +13,7 @@ export interface SupabaseConfig {
 export const SUPABASE_CONFIG = new InjectionToken<SupabaseConfig>('SUPABASE_CONFIG', {
   providedIn: 'root',
   factory: () => ({
-    url: '',
-    anonKey: '',
+    url: 'https://ffrkjuayuwfpoavhsogn.supabase.co',
+    anonKey: 'sb_publishable_LluGR7TUQOfdbavcc9X3Ow_0FAq7Jji',
   }),
 });
