@@ -1,35 +1,65 @@
-// Mobile first: base styles target phones; wider screens only widen the reading column.
-:root {
-  --color-primary: #1f3a5f;
-  --color-on-primary: #ffffff;
-  --color-bg: #ffffff;
-  --color-text: #1b1b1f;
-  --color-muted: #5f6368;
-  --color-surface: #f3f5f8;
-  --color-border: #dde1e7;
-  --color-link: #1f5fa8;
-  --color-code-bg: #f3f5f8;
-  --color-correct: #1e7a3c;
-  --color-correct-bg: #e6f4ea;
-  --color-incorrect: #b3261e;
-  --color-incorrect-bg: #fce8e6;
-  color-scheme: light dark;
+// Visual world: an engineer's technical sheet. Grid-paper ground, one reading sheet with corner
+// ticks, square corners everywhere, one orange accent (the reference's, and Java's).
+// Type has one job per family: pixel for the wordmark and page titles, Plex Sans for reading,
+// JetBrains Mono for code and metadata. Mobile first.
+
+@mixin night {
+  --ground: #101010;
+  --grid: rgb(255 255 255 / 4%);
+  --surface: #171717;
+  --inset: #1f1f1f;
+  --border: #2e2e2e;
+  --border-strong: #4a4a4a;
+  --ink: #e4e4e4; // not pure white: avoids halation on a dark ground
+  --muted: #a3a3a3;
+  --accent: #ff8a3d;
+  --accent-ink: #ff9a57;
+  --on-accent: #101010;
+  --correct: #6cc68f;
+  --correct-bg: #15261b;
+  --incorrect: #f28b80;
+  --incorrect-bg: #2b1715;
+  color-scheme: dark;
 }
 
+:root {
+  --ground: #e5e5e5;
+  --grid: rgb(14 14 14 / 6%);
+  --surface: #f5f5f5;
+  --inset: #ebebeb;
+  --border: #cfcfcf;
+  --border-strong: #9e9e9e;
+  --ink: #0e0e0e;
+  --muted: #555555;
+  --accent: #ff7120;
+  --accent-ink: #a84300; // orange that still reads as text on the light sheet (5:1)
+  --on-accent: #0e0e0e;
+  --correct: #1d7a3e;
+  --correct-bg: #dff1e4;
+  --incorrect: #b3261e;
+  --incorrect-bg: #f8e1df;
+  color-scheme: light;
+
+  --font-display: 'Pixelify Sans Variable', ui-monospace, monospace;
+  --font-text: 'IBM Plex Sans Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, 'Cascadia Code', Consolas, monospace;
+
+  --space: 4px;
+  --gutter: 16px;
+  // ~66 characters per line of Spanish prose at 17px Plex Sans: the comfortable reading range.
+  // Not in ch: "ch" is the width of "0", wider than an average proportional letter (62ch gave 84).
+  --measure: 31rem;
+}
+
+// "system" leaves <html> unmarked and follows the OS; an explicit choice sets data-theme.
 @media (prefers-color-scheme: dark) {
-  :root {
-    --color-bg: #121418;
-    --color-text: #e6e6ea;
-    --color-muted: #a0a4ab;
-    --color-surface: #1c1f25;
-    --color-border: #2e333b;
-    --color-link: #8ab4f8;
-    --color-code-bg: #1c1f25;
-    --color-correct: #81c995;
-    --color-correct-bg: #1b2e22;
-    --color-incorrect: #f28b82;
-    --color-incorrect-bg: #3a1f1d;
+  :root:not([data-theme='light']) {
+    @include night;
   }
+}
+
+:root[data-theme='dark'] {
+  @include night;
 }
 
 *,
@@ -38,85 +68,293 @@
   box-sizing: border-box;
 }
 
-body {
-  margin: 0;
-  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  font-size: 1.0625rem;
-  line-height: 1.6;
-  background: var(--color-bg);
-  color: var(--color-text);
+html {
+  -webkit-text-size-adjust: 100%;
 }
 
-// Shared building blocks used by several pages.
-.card {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 0.75rem;
-  min-height: 3rem;
-  padding: 0.75rem 1rem;
-  border: 1px solid var(--color-border);
-  border-radius: 0.5rem;
-  background: var(--color-surface);
-  color: inherit;
-  text-decoration: none;
+body {
+  margin: 0;
+  min-height: 100dvh;
+  font-family: var(--font-text);
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--ink);
+  background-color: var(--ground);
+  // Grid paper: 32px squares, faint enough to sit behind text without competing.
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 32px 32px;
+  -webkit-font-smoothing: antialiased;
+}
 
-  &.disabled {
-    opacity: 0.6;
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+a {
+  color: inherit;
+}
+
+// accent-ink, not accent: the bright orange is only ~2.6:1 on the light sheet, under the 3:1 a
+// focus indicator needs. accent-ink holds 5:1 there and 8:1 at night.
+:focus-visible {
+  outline: 2px solid var(--accent-ink);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+// ---------- Shared building blocks ----------
+
+// The one sheet per page: where reading happens. Corner ticks mark it as a technical drawing.
+.sheet {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 20px var(--gutter) 28px;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-color: var(--ink);
+    border-style: solid;
+    pointer-events: none;
   }
 
-  .title {
-    font-weight: 600;
+  &::before {
+    top: -1px;
+    left: -1px;
+    border-width: 2px 0 0 2px;
+  }
+
+  &::after {
+    right: -1px;
+    bottom: -1px;
+    border-width: 0 2px 2px 0;
+  }
+
+  @media (min-width: 640px) {
+    padding: 32px 40px 40px;
+  }
+}
+
+// Page titles: the pixel face is the identity, kept to short lines.
+.page-title {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 1.625rem;
+  line-height: 1.15;
+  letter-spacing: 0;
+  margin: 0;
+
+  @media (min-width: 640px) {
+    font-size: 2rem;
   }
 }
 
 .meta {
-  color: var(--color-muted);
-  font-size: 0.875rem;
-  white-space: nowrap;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  color: var(--muted);
 }
 
 .state {
-  color: var(--color-muted);
-  text-align: center;
-  padding: 2rem 0;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  color: var(--muted);
+  padding: 32px 0;
 }
 
 .back {
-  display: inline-block;
-  padding: 0.25rem 0;
-  color: var(--color-link);
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  color: var(--muted);
   text-decoration: none;
+
+  &:hover {
+    color: var(--ink);
+  }
 }
 
-// Lesson body: HTML injected from compiled Markdown, so it cannot use component-scoped styles.
+// Buttons: square, mono labels. One filled (accent) action per screen at most.
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--border-strong);
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 120ms ease-out;
+
+  &:hover {
+    background: var(--inset);
+  }
+
+  &.primary {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: var(--on-accent);
+    font-weight: 600;
+
+    &:hover {
+      background: color-mix(in srgb, var(--accent) 88%, var(--ink));
+    }
+  }
+}
+
+// Row lists: modules and lessons. A list of rows, not a grid of cards.
+.rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--border);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 3.5ch 1fr auto;
+  align-items: baseline;
+  column-gap: 12px;
+  min-height: 56px;
+  padding: 12px 4px;
+  border-bottom: 1px solid var(--border);
+  color: inherit;
+  text-decoration: none;
+
+  .index {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--muted);
+  }
+
+  .title {
+    font-weight: 500;
+  }
+
+  .sub {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  .aside {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+}
+
+a.row {
+  transition: background-color 120ms ease-out;
+
+  &:hover {
+    background: var(--inset);
+
+    .index {
+      color: var(--accent-ink);
+    }
+  }
+}
+
+.row.unavailable {
+  color: var(--muted);
+}
+
+// ---------- Lesson body ----------
+// HTML injected from compiled Markdown, so it cannot use component-scoped styles.
 .prose {
+  max-width: var(--measure);
+  font-size: 1.0625rem;
+  line-height: 1.7;
   overflow-wrap: break-word;
 
+  > :first-child {
+    margin-top: 0;
+  }
+
   h2 {
-    font-size: 1.1875rem;
-    margin: 1.75rem 0 0.5rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.3;
+    margin: 2.25rem 0 0.5rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border);
+  }
+
+  p,
+  ul,
+  ol {
+    margin: 0 0 1rem;
+  }
+
+  li + li {
+    margin-top: 0.375rem;
   }
 
   a {
-    color: var(--color-link);
+    color: var(--accent-ink);
+    text-underline-offset: 3px;
+  }
+
+  // Links that stand alone in a list (the sources) were 22px tall: hard to tap. Grow the hit area
+  // to 34px without moving the text; it stays clear of the next line's.
+  li > a {
+    display: inline-block;
+    padding-block: 6px;
+    margin-block: -6px;
+  }
+
+  strong {
+    font-weight: 600;
   }
 
   code {
-    font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
+    font-family: var(--font-mono);
     font-size: 0.875em;
-    background: var(--color-code-bg);
-    padding: 0.1em 0.3em;
-    border-radius: 0.25rem;
+    background: var(--inset);
+    padding: 0.1em 0.35em;
   }
 
   pre {
     overflow-x: auto;
-    padding: 0.75rem 1rem;
-    background: var(--color-code-bg);
-    border: 1px solid var(--color-border);
-    border-radius: 0.5rem;
-    line-height: 1.45;
+    margin: 0 0 1.25rem;
+    padding: 14px 16px;
+    background: var(--inset);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    line-height: 1.55;
 
     code {
       padding: 0;

@@ -24,12 +24,13 @@ describe('App', () => {
     await TestBed.inject(ReviewService).ready;
   });
 
-  it('renders the app name in the header', async () => {
+  it('renders the wordmark as a home link named for screen readers', async () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
-    const header = (fixture.nativeElement as HTMLElement).querySelector('header');
+    const home = (fixture.nativeElement as HTMLElement).querySelector('header a[href="/"]');
 
-    expect(header?.textContent).toContain('Mi Academia');
+    expect(home?.textContent).toContain('mi_academia');
+    expect(home?.getAttribute('aria-label')).toBe('Mi Academia, inicio');
   });
 
   it('links to the daily review with the number of due questions', async () => {
@@ -39,6 +40,22 @@ describe('App', () => {
 
     expect(link?.textContent).toContain('Repaso');
     expect(link?.querySelector('.badge')?.textContent?.trim()).toBe('1');
+  });
+
+  it('switches between system, light and night themes from the header', async () => {
+    localStorage.clear();
+    const fixture = TestBed.createComponent(App);
+    await fixture.whenStable();
+    const toggle = () => (fixture.nativeElement as HTMLElement).querySelector('button.theme-toggle') as HTMLButtonElement;
+
+    expect(toggle().getAttribute('aria-label')).toBe('Tema: sistema. Cambiar a claro');
+    toggle().click();
+    await fixture.whenStable();
+    expect(toggle().getAttribute('aria-label')).toBe('Tema: claro. Cambiar a noche');
+    toggle().click();
+    await fixture.whenStable();
+    expect(toggle().getAttribute('aria-label')).toBe('Tema: noche. Cambiar a sistema');
+    expect(document.documentElement.dataset['theme']).toBe('dark');
   });
 
   it('hosts the router outlet inside main', () => {

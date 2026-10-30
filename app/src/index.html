@@ -3,9 +3,17 @@
   <head>
     <meta charset="utf-8" />
     <title>Mi Academia</title>
-    <meta name="theme-color" content="#1f3a5f" />
+    <meta name="theme-color" content="#e5e5e5" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#101010" media="(prefers-color-scheme: dark)" />
     <base href="/" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <script>
+      // Apply a saved light/night choice before first paint (no white flash). Key: ThemeService.
+      try {
+        var theme = localStorage.getItem('mi-academia:theme');
+        if (theme === 'light' || theme === 'dark') document.documentElement.dataset.theme = theme;
+      } catch (e) {}
+    </script>
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
     <link rel="manifest" href="manifest.webmanifest" />
   </head>

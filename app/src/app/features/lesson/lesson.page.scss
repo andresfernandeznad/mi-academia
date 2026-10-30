@@ -1,27 +1,30 @@
-h1 {
-  font-size: 1.5rem;
-  line-height: 1.25;
-  margin: 0;
-}
+header {
+  margin-bottom: 28px;
 
-header .meta {
-  margin: 0.25rem 0 1rem;
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 16px;
+    margin: 0 0 10px;
+  }
 }
 
 .pager {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
-  margin: 2rem 0 1rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--color-border);
-
-  a {
-    color: var(--color-link);
-  }
+  gap: 8px;
+  margin-top: 16px;
 
   .primary {
-    margin-left: auto;
-    font-weight: 600;
+    flex: 1 1 100%;
+    justify-content: space-between;
+    text-align: left;
+  }
+
+  @media (min-width: 640px) {
+    .primary {
+      flex: 0 1 auto;
+      margin-left: auto;
+    }
   }
 }

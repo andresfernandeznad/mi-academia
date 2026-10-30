@@ -34,7 +34,13 @@
                 "output": "content"
               }
             ],
-            "styles": ["src/styles.scss"]
+            "styles": [
+              "node_modules/@fontsource-variable/ibm-plex-sans/wght.css",
+              "node_modules/@fontsource-variable/ibm-plex-sans/wght-italic.css",
+              "node_modules/@fontsource-variable/jetbrains-mono/wght.css",
+              "node_modules/@fontsource-variable/pixelify-sans/wght.css",
+              "src/styles.scss"
+            ]
           },
           "configurations": {
             "production": {

@@ -9,26 +9,29 @@ import { ContentService } from '../../content/content.service';
   styleUrl: './module.page.scss',
   template: `
     @if (content.index.isLoading()) {
-      <p class="state">Cargando…</p>
+      <p class="state">Cargando el módulo…</p>
     } @else if (module(); as module) {
       <a class="back" routerLink="/">← Roadmap</a>
-      <h1>{{ module.title }}</h1>
-      @if (module.description) {
-        <p class="description">{{ module.description }}</p>
-      }
-      <ol class="lessons">
-        @for (lesson of module.lessons; track lesson.id; let i = $index) {
-          <li>
-            <a class="card" [routerLink]="['/m', module.id, lesson.id]">
-              <span class="title">{{ i + 1 }}. {{ lesson.title }}</span>
-              <span class="meta">{{ lesson.minutes }} min</span>
-            </a>
-          </li>
+      <div class="sheet">
+        <h1 class="page-title">{{ module.title }}</h1>
+        @if (module.description) {
+          <p class="description">{{ module.description }}</p>
         }
-      </ol>
+        <ol class="rows">
+          @for (lesson of module.lessons; track lesson.id; let i = $index) {
+            <li>
+              <a class="row" [routerLink]="['/m', module.id, lesson.id]">
+                <span class="index">{{ i + 1 < 10 ? '0' : '' }}{{ i + 1 }}</span>
+                <span class="title">{{ lesson.title }}</span>
+                <span class="aside">{{ lesson.minutes }} min</span>
+              </a>
+            </li>
+          }
+        </ol>
+      </div>
     } @else {
-      <p class="state">Módulo no encontrado.</p>
-      <a class="back" routerLink="/">← Volver al roadmap</a>
+      <p class="state">Ese módulo no existe. Vuelve al roadmap para elegir otro.</p>
+      <a class="back" routerLink="/">← Roadmap</a>
     }
   `,
 })

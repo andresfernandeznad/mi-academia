@@ -5,48 +5,103 @@
 }
 
 .app-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   position: sticky;
   top: 0;
   z-index: 1;
-  padding: 0.75rem 1rem;
-  padding-top: max(0.75rem, env(safe-area-inset-top));
-  background: var(--color-primary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  min-height: 56px;
+  padding: 0 var(--gutter);
+  padding-top: env(safe-area-inset-top);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
 }
 
-.brand {
-  color: var(--color-on-primary);
-  font-weight: 700;
-  font-size: 1.125rem;
-  text-decoration: none;
-}
-
-.review-link {
+.wordmark {
   display: inline-flex;
   align-items: center;
-  gap: 0.375rem;
-  min-height: 2.75rem;
-  color: var(--color-on-primary);
+  min-height: 44px;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--ink);
   text-decoration: none;
+}
+
+// The brand mark: a terminal caret in the accent colour. Static: a blinking cursor beside the
+// reading column would pull the eye all session long.
+.caret {
+  display: inline-block;
+  width: 0.55em;
+  height: 1em;
+  margin-left: 3px;
+  background: var(--accent);
+  transform: translateY(1px);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.review-link,
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 10px;
+  border: 1px solid transparent;
+  background: none;
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  text-decoration: none;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--inset);
+  }
+}
+
+.review-link.is-active {
+  border-color: var(--border-strong);
 }
 
 .badge {
-  min-width: 1.5rem;
-  padding: 0 0.375rem;
-  border-radius: 999px;
-  background: var(--color-on-primary);
-  color: var(--color-primary);
-  font-size: 0.8125rem;
+  min-width: 22px;
+  padding: 0 5px;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-size: 0.75rem;
   font-weight: 700;
+  line-height: 22px;
   text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.theme-toggle svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: square;
 }
 
 .app-main {
   flex: 1;
   width: 100%;
-  max-width: 42rem;
+  max-width: 48rem;
   margin: 0 auto;
-  padding: 1rem;
+  padding: 16px 12px calc(32px + env(safe-area-inset-bottom));
+
+  @media (min-width: 640px) {
+    padding: 40px 24px 64px;
+  }
 }

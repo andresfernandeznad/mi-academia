@@ -43,6 +43,6 @@ describe('ModulePage', () => {
   it('tells the user when the module does not exist', async () => {
     const page = await open('/m/no-existe');
 
-    expect(page.textContent).toContain('Módulo no encontrado');
+    expect(page.textContent).toContain('Ese módulo no existe');
   });
 });

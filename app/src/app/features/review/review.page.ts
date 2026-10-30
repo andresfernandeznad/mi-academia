@@ -31,30 +31,35 @@ const RATINGS: Record<Grade, RatingOption[]> = {
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './review.page.scss',
   template: `
-    <h1>Repaso de hoy</h1>
-    @if (questions.error()) {
-      <p class="state">No se pudieron cargar las preguntas.</p>
-    } @else if (questions.isLoading()) {
-      <p class="state">Cargando…</p>
-    } @else if (current(); as question) {
-      <p class="meta">
-        Quedan {{ pending().length }} · De «{{ question.lessonTitle }}»
-      </p>
-      <app-question-card [question]="question" (answered)="grade.set($event.grade)" />
-      @if (grade(); as g) {
-        <div class="rating">
-          @if (g !== 'incorrect') {
-            <p class="meta">¿Cómo te ha resultado?</p>
-          }
-          @for (option of ratings[g]; track option.rating) {
-            <button type="button" (click)="rate(question.id, option.rating)">{{ option.label }}</button>
-          }
-        </div>
+    <div class="sheet">
+      <h1 class="page-title">Repaso de hoy</h1>
+      @if (questions.error()) {
+        <p class="state">No se pudieron cargar las preguntas. Comprueba la conexión y vuelve a entrar.</p>
+      } @else if (questions.isLoading()) {
+        <p class="state">Cargando las preguntas…</p>
+      } @else if (current(); as question) {
+        <p class="meta context">
+          <span class="remaining">Quedan {{ pending().length }}</span>
+          <span>De «{{ question.lessonTitle }}»</span>
+        </p>
+        <app-question-card [question]="question" (answered)="grade.set($event.grade)" />
+        @if (grade(); as g) {
+          <div class="rating">
+            @if (g !== 'incorrect') {
+              <p class="meta">¿Cómo te ha resultado?</p>
+            }
+            @for (option of ratings[g]; track option.rating) {
+              <button type="button" class="button" [class.primary]="g === 'incorrect'" (click)="rate(question.id, option.rating)">
+                {{ option.label }}
+              </button>
+            }
+          </div>
+        }
+      } @else {
+        <p class="state">No tienes preguntas pendientes para hoy. Las que respondas en las lecciones volverán aquí cuando toque repasarlas.</p>
+        <a class="button" routerLink="/">Ir al roadmap</a>
       }
-    } @else {
-      <p class="state">No tienes preguntas pendientes para hoy.</p>
-      <a class="back" routerLink="/">← Seguir con el roadmap</a>
-    }
+    </div>
   `,
 })
 export class ReviewPage {

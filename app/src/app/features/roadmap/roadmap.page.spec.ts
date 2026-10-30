@@ -46,7 +46,17 @@ describe('RoadmapPage', () => {
     http.expectOne('content/index.json').flush({ ...indexFixture, phases: [{ ...phase, modules: [single] }] });
     await harness.fixture.whenStable();
 
-    expect(harness.routeNativeElement!.textContent).toContain('1 lección ·');
+    const row = harness.routeNativeElement!.querySelector('a.row')!;
+    expect(row.querySelector('.sub')?.textContent?.trim()).toBe('1 lección');
+    expect(row.querySelector('.aside')?.textContent?.trim()).toBe('15 h');
+  });
+
+  it('numbers modules by phase, as in the roadmap', async () => {
+    http.expectOne('content/index.json').flush(indexFixture);
+    await harness.fixture.whenStable();
+
+    const codes = Array.from(harness.routeNativeElement!.querySelectorAll('.row .index')).map((e) => e.textContent?.trim());
+    expect(codes).toEqual(['0.1', '1.1']);
   });
 
   it('shows an error message when the content cannot be loaded', async () => {
