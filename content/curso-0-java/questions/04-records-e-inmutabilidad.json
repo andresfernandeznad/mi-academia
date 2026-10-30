@@ -1,0 +1,30 @@
+[
+  {
+    "id": "records-e-inmutabilidad-1",
+    "type": "quiz",
+    "prompt": "¿Qué NO genera un record automáticamente?",
+    "options": ["Setters", "equals y hashCode", "Un accesor por componente", "toString"],
+    "answer": 0,
+    "explanation": "Los componentes de un record son final: no hay setters. Para cambiar un valor se crea otro record."
+  },
+  {
+    "id": "records-e-inmutabilidad-2",
+    "type": "find-the-bug",
+    "prompt": "Este record no compila. ¿Qué línea falla?",
+    "code": "record Ticket(String id, Prioridad prioridad) {\n    Ticket {\n        Objects.requireNonNull(prioridad);\n        this.id = id.strip();\n    }\n}",
+    "answer": 4,
+    "explanation": "En el constructor compacto los campos se asignan solos al final y son final; asignarlos con this.id es un error de compilación. Se reasigna el parámetro: id = id.strip();"
+  },
+  {
+    "id": "records-e-inmutabilidad-3",
+    "type": "design-decision",
+    "prompt": "En la CLI, un ticket importado puede cambiar de prioridad durante la validación. ¿Cómo lo modelas?",
+    "options": [
+      "Record, con un método conPrioridad(...) que devuelve un ticket nuevo",
+      "Clase con setPrioridad(...)",
+      "Record con una List<Prioridad> mutable para ir cambiándola"
+    ],
+    "answer": 0,
+    "explanation": "En un proceso por pasos, devolver un valor nuevo deja claro qué paso cambió qué, y nadie modifica un ticket ajeno por sorpresa. Una clase mutable tiene sentido cuando un framework la exige (por ejemplo, una entidad JPA)."
+  }
+]

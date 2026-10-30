@@ -347,6 +347,32 @@ a.row {
     padding: 0.1em 0.35em;
   }
 
+  // Tables scroll inside their own box on a phone; the page never scrolls sideways.
+  table {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+    margin: 0 0 1.25rem;
+    border-collapse: collapse;
+    font-size: 0.9375rem;
+    line-height: 1.45;
+  }
+
+  th,
+  td {
+    padding: 8px 12px 8px 0;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+    vertical-align: top;
+  }
+
+  th {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--muted);
+  }
+
   pre {
     overflow-x: auto;
     margin: 0 0 1.25rem;

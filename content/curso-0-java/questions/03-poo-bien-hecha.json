@@ -1,0 +1,35 @@
+[
+  {
+    "id": "poo-bien-hecha-1",
+    "type": "quiz",
+    "prompt": "Si a.equals(b) devuelve true, ¿qué exige el contrato de Object sobre hashCode?",
+    "options": [
+      "a.hashCode() == b.hashCode()",
+      "Nada: son métodos independientes",
+      "Que los hashCode sean distintos para repartir mejor",
+      "Solo que hashCode no lance excepciones"
+    ],
+    "answer": 0,
+    "explanation": "Objetos iguales deben dar el mismo hashCode. Lo contrario no hace falta: dos objetos distintos pueden coincidir en hashCode (colisión)."
+  },
+  {
+    "id": "poo-bien-hecha-2",
+    "type": "find-the-bug",
+    "prompt": "Esta clase cuenta 6 elementos cuando se añaden 3 con addAll. ¿Qué línea causa el doble conteo?",
+    "code": "class SetContador<E> extends HashSet<E> {\n    int añadidos = 0;\n    @Override public boolean add(E e) { añadidos++; return super.add(e); }\n    @Override public boolean addAll(Collection<? extends E> c) {\n        añadidos += c.size();\n        return super.addAll(c);\n    }\n}",
+    "answer": 5,
+    "explanation": "HashSet hereda addAll de AbstractCollection, que llama a add por cada elemento: se cuentan en la línea 5 y otra vez en add. Depender de cómo está implementado el padre es la fragilidad de la herencia; con composición no pasa."
+  },
+  {
+    "id": "poo-bien-hecha-3",
+    "type": "design-decision",
+    "prompt": "Al cerrar un ticket hay que avisar por email y, pronto, también por Slack. ¿Cómo lo modelas?",
+    "options": [
+      "Una interfaz Notificador inyectada en el servicio, con una implementación por canal",
+      "Subclases TicketConEmail y TicketConSlack que redefinen cerrar()",
+      "Un if por canal dentro de Ticket.cerrar()"
+    ],
+    "answer": 0,
+    "explanation": "Con la interfaz, cada canal es una clase nueva y el servicio no cambia; además, en los tests inyectas un doble. Las subclases multiplican combinaciones (¿email y Slack a la vez?) y el if hace crecer Ticket con responsabilidades que no son suyas."
+  }
+]

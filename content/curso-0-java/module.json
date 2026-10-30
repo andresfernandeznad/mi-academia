@@ -1,5 +1,18 @@
 {
   "id": "curso-0-java",
-  "description": "Repaso rápido de Java moderno tomando Java 25 (LTS) como referencia: de lo que ya usas a lo que añadieron las últimas versiones.",
-  "lessons": ["01-java-hoy"]
+  "description": "Repaso rápido de Java moderno tomando Java 25 (LTS) como referencia: de lo que ya usas a lo que añadieron las últimas versiones. Se cierra con una CLI que importa tickets desde CSV.",
+  "lessons": [
+    "01-java-hoy",
+    "02-tipos-y-texto",
+    "03-poo-bien-hecha",
+    "04-records-e-inmutabilidad",
+    "05-enums-sealed-pattern-matching",
+    "06-genericos-sin-miedo",
+    "07-colecciones",
+    "08-lambdas-y-optional",
+    "09-streams",
+    "10-excepciones",
+    "11-fechas",
+    "12-tests"
+  ]
 }

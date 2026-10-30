@@ -1,0 +1,35 @@
+[
+  {
+    "id": "excepciones-1",
+    "type": "quiz",
+    "prompt": "En un try-with-resources falla el cuerpo y, al cerrar, también falla close(). ¿Qué excepción recibe quien llama?",
+    "options": [
+      "La del cuerpo, con la de close() como suprimida",
+      "La de close(), porque ocurre la última",
+      "Una excepción nueva que envuelve las dos",
+      "Ninguna: try-with-resources las ignora"
+    ],
+    "answer": 0,
+    "explanation": "Se propaga la excepción original y la del cierre se añade con addSuppressed. Las dos quedan disponibles: getSuppressed() devuelve la segunda."
+  },
+  {
+    "id": "excepciones-2",
+    "type": "find-the-bug",
+    "prompt": "En producción el log solo dice «No se pudo leer tickets.csv», sin la causa real. ¿Qué línea la pierde?",
+    "code": "List<String> leer(Path csv) {\n    try {\n        return Files.readAllLines(csv);\n    } catch (IOException e) {\n        throw new IllegalStateException(\"No se pudo leer \" + csv);\n    }\n}",
+    "answer": 5,
+    "explanation": "La nueva excepción no recibe e como causa, así que se pierde la traza original: si el fichero no existía, si faltaban permisos, etc. Corrección: new IllegalStateException(\"No se pudo leer \" + csv, e)."
+  },
+  {
+    "id": "excepciones-3",
+    "type": "design-decision",
+    "prompt": "Al importar 10.000 líneas, algunas traen una prioridad desconocida. ¿Cómo lo gestionas?",
+    "options": [
+      "Lanzar una excepción checked por línea y abortar la importación",
+      "Devolver un resultado con los tickets válidos y una lista de errores por línea",
+      "Capturar la excepción y saltarse la línea sin registrar nada"
+    ],
+    "answer": 1,
+    "explanation": "Una línea mal formada es un caso esperado, no excepcional: modelarla como dato permite importar lo válido e informar de todo lo inválido de una vez. Abortar castiga 9.999 líneas buenas por una mala, y saltarla en silencio oculta el problema."
+  }
+]

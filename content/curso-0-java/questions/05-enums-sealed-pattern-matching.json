@@ -1,0 +1,35 @@
+[
+  {
+    "id": "enums-sealed-pattern-matching-1",
+    "type": "quiz",
+    "prompt": "Tienes un switch expresión sin default sobre una interfaz sellada. Añades un record nuevo que la implementa. ¿Qué pasa?",
+    "options": [
+      "Los switch que no cubren el nuevo caso dejan de compilar",
+      "Compila y el nuevo caso devuelve null",
+      "Compila y lanza una excepción solo si llega ese caso",
+      "Nada: los switch ignoran los tipos nuevos"
+    ],
+    "answer": 0,
+    "explanation": "Sin default, el compilador exige exhaustividad sobre el conjunto cerrado de permits. Es justo lo que quieres: te señala cada sitio que hay que actualizar."
+  },
+  {
+    "id": "enums-sealed-pattern-matching-2",
+    "type": "find-the-bug",
+    "prompt": "Evento es sellado con Creado, Asignado y Cerrado. Los tickets asignados se describen como «Otro evento» y nadie se entera. ¿Qué línea es el problema?",
+    "code": "String describir(Evento e) {\n    return switch (e) {\n        case Creado c -> \"Nuevo ticket \" + c.id();\n        case Cerrado c -> \"Cerrado \" + c.id();\n        default -> \"Otro evento\";\n    };\n}",
+    "answer": 5,
+    "explanation": "default tapa el caso Asignado que falta y desactiva la comprobación de exhaustividad. Sin default, el compilador habría avisado."
+  },
+  {
+    "id": "enums-sealed-pattern-matching-3",
+    "type": "design-decision",
+    "prompt": "Cada estado de un ticket lleva datos distintos: «En curso» tiene agente y «Cerrado» tiene fecha y motivo. ¿Cómo lo modelas?",
+    "options": [
+      "Constantes String (\"EN_CURSO\", \"CERRADO\") y campos opcionales en Ticket",
+      "Un enum Estado y campos nullables para agente, fecha y motivo",
+      "Una interfaz sellada Estado con un record por estado"
+    ],
+    "answer": 2,
+    "explanation": "Con la interfaz sellada, cada estado solo tiene los datos que le corresponden y un switch lo trata sin nulls. El enum basta cuando los estados no llevan datos; los String no los protege el compilador."
+  }
+]

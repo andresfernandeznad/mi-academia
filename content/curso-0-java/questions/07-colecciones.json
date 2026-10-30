@@ -1,0 +1,30 @@
+[
+  {
+    "id": "colecciones-1",
+    "type": "quiz",
+    "prompt": "Al importar, necesitas saber muchas veces si un id de ticket ya se procesó. ¿Qué colección usas?",
+    "options": ["HashSet<String>", "ArrayList<String>", "LinkedList<String>", "TreeMap<String, String>"],
+    "answer": 0,
+    "explanation": "HashSet.contains es de tiempo constante de media; en una lista es lineal, y dentro de un bucle el total se vuelve cuadrático. TreeMap funcionaría, pero en log n y sin necesitar orden."
+  },
+  {
+    "id": "colecciones-2",
+    "type": "find-the-bug",
+    "prompt": "Este código lanza UnsupportedOperationException. ¿En qué línea?",
+    "code": "List<String> estados = List.of(\"ABIERTO\", \"CERRADO\");\nvar conocidos = new ArrayList<>(estados);\nconocidos.add(\"EN_CURSO\");\nestados.add(\"PENDIENTE\");",
+    "answer": 4,
+    "explanation": "List.of devuelve una lista inmutable. La copia de la línea 2 sí es modificable; la original no."
+  },
+  {
+    "id": "colecciones-3",
+    "type": "design-decision",
+    "prompt": "Cuentas tickets por estado (enum Estado: ABIERTO, EN_CURSO, CERRADO) y el informe debe mostrarlos siempre en ese orden. ¿Qué mapa usas?",
+    "options": [
+      "HashMap<String, Long>",
+      "TreeMap<String, Long>",
+      "EnumMap<Estado, Long>"
+    ],
+    "answer": 2,
+    "explanation": "EnumMap mantiene el orden de declaración del enum y es muy compacto. HashMap no garantiza ningún orden, y TreeMap con String ordena alfabéticamente: ABIERTO, CERRADO, EN_CURSO."
+  }
+]

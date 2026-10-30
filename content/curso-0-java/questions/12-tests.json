@@ -1,0 +1,35 @@
+[
+  {
+    "id": "tests-1",
+    "type": "quiz",
+    "prompt": "Escribes la clase TicketImporterChecks con varios @Test. Ejecutas mvn test. ¿Qué pasa?",
+    "options": [
+      "No se ejecuta: Surefire solo incluye por defecto Test*, *Test, *Tests y *TestCase",
+      "Se ejecuta: Surefire busca anotaciones @Test en todas las clases",
+      "Falla la compilación",
+      "Se ejecuta solo si está en src/test/java/pruebas"
+    ],
+    "answer": 0,
+    "explanation": "Surefire filtra por nombre de clase. TicketImporterChecks no encaja con ningún patrón por defecto, así que mvn test termina en verde sin ejecutarla: un falso éxito."
+  },
+  {
+    "id": "tests-2",
+    "type": "find-the-bug",
+    "prompt": "Este test pasa aunque haya errores de importación. ¿Qué línea no comprueba nada?",
+    "code": "@Test\nvoid importsTheValidTickets() {\n    var result = importer.importLines(lines);\n    assertThat(result.tickets()).hasSize(2);\n    assertThat(result.errors().isEmpty());\n}",
+    "answer": 5,
+    "explanation": "assertThat(boolean) solo crea la aserción; sin isTrue() no se evalúa nada. Lo correcto es assertThat(result.errors()).isEmpty(), que además muestra los errores si falla."
+  },
+  {
+    "id": "tests-3",
+    "type": "design-decision",
+    "prompt": "Quieres probar que Priority.parse acepta «alta», «ALTA», « Alta » y rechaza «urgentísima». ¿Cómo lo organizas?",
+    "options": [
+      "Un @ParameterizedTest para los válidos y un test aparte para el rechazo",
+      "Un único @Test con un bucle sobre todos los casos",
+      "Solo probar «ALTA»: el resto es lo mismo"
+    ],
+    "answer": 0,
+    "explanation": "El test parametrizado informa de cada caso por separado (sabes cuál falló) y el rechazo es otro comportamiento, así que merece su propio test. El bucle se para en el primer fallo y oculta el resto; probar un solo caso deja sin cubrir justo la normalización que quieres comprobar."
+  }
+]

@@ -1,0 +1,35 @@
+[
+  {
+    "id": "genericos-sin-miedo-1",
+    "type": "quiz",
+    "prompt": "void imprimir(List<Object> xs) y lo llamas con una List<String>. ¿Qué pasa?",
+    "options": [
+      "No compila: los genéricos son invariantes",
+      "Compila, porque String es un Object",
+      "Compila con un warning y funciona",
+      "Lanza ClassCastException al ejecutar"
+    ],
+    "answer": 0,
+    "explanation": "List<String> no es subtipo de List<Object>. Si lo fuera, imprimir podría añadir un Integer a tu lista de String. La firma correcta es List<?> o List<? extends Object>."
+  },
+  {
+    "id": "genericos-sin-miedo-2",
+    "type": "find-the-bug",
+    "prompt": "Este método no compila. ¿Qué línea falla?",
+    "code": "double total(List<? extends Number> numeros) {\n    double suma = 0;\n    for (Number n : numeros) suma += n.doubleValue();\n    numeros.add(0);\n    return suma;\n}",
+    "answer": 4,
+    "explanation": "Con ? extends Number la lista puede ser de Double, Long…: el compilador no sabe si un Integer cabe, así que prohíbe añadir. Se puede leer, pero no escribir."
+  },
+  {
+    "id": "genericos-sin-miedo-3",
+    "type": "design-decision",
+    "prompt": "Escribes un método que copia los tickets urgentes de una lista a otra. ¿Qué firma eliges?",
+    "options": [
+      "void copiarUrgentes(List<? extends Ticket> origen, List<? super Ticket> destino)",
+      "void copiarUrgentes(List<Ticket> origen, List<Ticket> destino)",
+      "void copiarUrgentes(List origen, List destino)"
+    ],
+    "answer": 0,
+    "explanation": "PECS: el origen produce tickets (extends) y el destino los consume (super). Así acepta, por ejemplo, una List<TicketVip> como origen y una List<Object> como destino. La versión con tipos crudos renuncia a la comprobación de tipos."
+  }
+]

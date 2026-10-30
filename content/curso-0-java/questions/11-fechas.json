@@ -1,0 +1,30 @@
+[
+  {
+    "id": "fechas-1",
+    "type": "quiz",
+    "prompt": "Un ticket se crea el 24/10/2026 a las 10:00 en Europe/Madrid. ¿A qué hora local vence si sumas Duration.ofHours(24)?",
+    "options": ["A las 09:00 del 25", "A las 10:00 del 25", "A las 11:00 del 25", "Lanza una excepción por el cambio de hora"],
+    "answer": 0,
+    "explanation": "La noche del 24 al 25 de octubre de 2026 Madrid vuelve a UTC+1 y ese día dura 25 horas. 24 horas exactas terminan a las 09:00. plusDays(1) mantendría las 10:00."
+  },
+  {
+    "id": "fechas-2",
+    "type": "find-the-bug",
+    "prompt": "El informe muestra 29/12/2026 para un ticket del 29/12/2025. ¿Qué línea falla?",
+    "code": "var formato = DateTimeFormatter.ofPattern(\"dd/MM/YYYY\");\nvar fecha = LocalDate.of(2025, 12, 29);\nSystem.out.println(formato.format(fecha));",
+    "answer": 1,
+    "explanation": "YYYY es el año de la semana ISO, no el año de calendario: el 29/12/2025 pertenece a la semana 1 de 2026. El patrón correcto es dd/MM/yyyy."
+  },
+  {
+    "id": "fechas-3",
+    "type": "design-decision",
+    "prompt": "¿Con qué tipo guardas el momento de creación de un ticket?",
+    "options": [
+      "Instant, y conviertes a la zona del usuario al mostrarlo",
+      "LocalDateTime con la hora del servidor",
+      "ZonedDateTime con la zona del usuario que lo creó"
+    ],
+    "answer": 0,
+    "explanation": "Un Instant es un punto inequívoco en el tiempo: se ordena y se compara sin ambigüedad. LocalDateTime no sabe en qué zona estaba. ZonedDateTime funciona, pero mezcla el dato con una preferencia de presentación que puede cambiar."
+  }
+]

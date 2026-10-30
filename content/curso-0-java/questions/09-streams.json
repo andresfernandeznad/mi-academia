@@ -1,0 +1,35 @@
+[
+  {
+    "id": "streams-1",
+    "type": "quiz",
+    "prompt": "¿Qué hace esta línea sin nada más? tickets.stream().filter(Ticket::abierto).map(Ticket::id);",
+    "options": [
+      "Nada: sin operación terminal no se procesa ningún elemento",
+      "Filtra y transforma, y guarda el resultado en tickets",
+      "Devuelve una List<String> con los ids",
+      "No compila"
+    ],
+    "answer": 0,
+    "explanation": "filter y map son perezosas: solo describen la tubería. El trabajo ocurre al llamar a una terminal como toList(), count() o collect()."
+  },
+  {
+    "id": "streams-2",
+    "type": "find-the-bug",
+    "prompt": "Este código lanza IllegalStateException. ¿En qué línea?",
+    "code": "Stream<Ticket> abiertos = tickets.stream().filter(Ticket::abierto);\nlong total = abiertos.count();\nList<String> ids = abiertos.map(Ticket::id).toList();",
+    "answer": 3,
+    "explanation": "count() consumió el stream en la línea 2; un stream solo se recorre una vez. Crea otro desde tickets o calcula el total a partir de ids.size()."
+  },
+  {
+    "id": "streams-3",
+    "type": "design-decision",
+    "prompt": "Necesitas contar tickets por prioridad para el informe. ¿Cómo lo escribes?",
+    "options": [
+      "collect(groupingBy(Ticket::prioridad, counting()))",
+      "Un forEach que incrementa un HashMap externo",
+      "Un stream con filter y count por cada prioridad"
+    ],
+    "answer": 0,
+    "explanation": "groupingBy con counting recorre los datos una vez y no comparte estado mutable. El forEach con un mapa externo funciona hasta que alguien añade parallel(), y un stream por prioridad recorre la lista varias veces y hay que tocarlo cada vez que aparece una prioridad nueva."
+  }
+]

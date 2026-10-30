@@ -1,0 +1,30 @@
+[
+  {
+    "id": "tipos-y-texto-1",
+    "type": "quiz",
+    "prompt": "Integer c = 128, d = 128; ¿qué devuelve c == d?",
+    "options": ["false", "true", "No compila", "Depende del recolector de basura"],
+    "answer": 0,
+    "explanation": "== compara referencias. Integer.valueOf solo reutiliza objetos entre -128 y 127; 128 crea dos objetos distintos. Para comparar valores usa equals."
+  },
+  {
+    "id": "tipos-y-texto-2",
+    "type": "find-the-bug",
+    "prompt": "Este contador de tickets cerrados siempre da 0 con datos leídos del CSV. ¿Qué línea falla?",
+    "code": "String estado = columnas[1].strip();\nif (estado == \"CERRADO\") {\n    cerrados++;\n}",
+    "answer": 2,
+    "explanation": "El String leído del fichero es un objeto distinto del literal \"CERRADO\", así que == da false. Hay que usar \"CERRADO\".equals(estado)."
+  },
+  {
+    "id": "tipos-y-texto-3",
+    "type": "design-decision",
+    "prompt": "Tu equipo discute cuándo usar var en variables locales. ¿Qué norma propones?",
+    "options": [
+      "var cuando el tipo es evidente en la propia línea (new, literal o un método con nombre claro)",
+      "var en todas partes: menos texto, más legible",
+      "Nunca var: oculta el tipo"
+    ],
+    "answer": 0,
+    "explanation": "var no cambia el tipado estático, solo cuánto se escribe. Ayuda cuando el tipo ya se lee en la línea; perjudica cuando obliga a adivinar qué devuelve un método poco claro."
+  }
+]

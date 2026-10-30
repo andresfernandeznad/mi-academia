@@ -1,0 +1,35 @@
+[
+  {
+    "id": "lambdas-y-optional-1",
+    "type": "quiz",
+    "prompt": "buscar(id).orElse(cargarDeBaseDeDatos(id)): ¿cuándo se ejecuta cargarDeBaseDeDatos?",
+    "options": [
+      "Siempre, aunque buscar encuentre el ticket",
+      "Solo si buscar devuelve un Optional vacío",
+      "Nunca: orElse es perezoso",
+      "Solo la primera vez"
+    ],
+    "answer": 0,
+    "explanation": "El argumento de orElse se evalúa antes de llamar al método, como cualquier argumento en Java. Para hacerlo solo cuando haga falta: orElseGet(() -> cargarDeBaseDeDatos(id))."
+  },
+  {
+    "id": "lambdas-y-optional-2",
+    "type": "find-the-bug",
+    "prompt": "Quien llama hace buscar(id).isPresent() y recibe un NullPointerException. ¿Qué línea lo provoca?",
+    "code": "Optional<Ticket> buscar(String id) {\n    Ticket t = tickets.get(id);\n    if (t == null) {\n        return null;\n    }\n    return Optional.of(t);\n}",
+    "answer": 4,
+    "explanation": "Un método que devuelve Optional nunca debe devolver null: ese era el problema que venía a resolver. Lo correcto es Optional.empty(), o todo el método en una línea: return Optional.ofNullable(tickets.get(id));"
+  },
+  {
+    "id": "lambdas-y-optional-3",
+    "type": "design-decision",
+    "prompt": "Un ticket puede no tener agente asignado. ¿Cómo lo representas en la clase?",
+    "options": [
+      "Campo String agente (nullable) y un accesor Optional<String> agente()",
+      "Campo Optional<String> agente",
+      "Campo String agente con el valor \"\" cuando no hay agente"
+    ],
+    "answer": 0,
+    "explanation": "Optional está pensado como tipo de retorno: el campo puede ser null por dentro y el accesor obliga a quien llama a tratar la ausencia. Un Optional como campo añade un objeto más y no se serializa bien; la cadena vacía es un valor mágico que nadie recuerda comprobar."
+  }
+]
