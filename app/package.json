@@ -11,7 +11,8 @@
     "prestart": "npm run content",
     "prebuild": "npm run content",
     "test:content": "node --test \"scripts/**/*.test.ts\"",
-    "typecheck:scripts": "tsc -p scripts"
+    "typecheck:scripts": "tsc -p scripts",
+    "test:all": "npm run test:content && ng test --watch=false"
   },
   "private": true,
   "packageManager": "npm@11.19.1",
