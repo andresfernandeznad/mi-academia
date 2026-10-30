@@ -92,6 +92,20 @@ describe('compileContent', () => {
     assert.equal(lessons[0].questions.length, 3);
   });
 
+  it('renders the lesson Markdown to HTML at build time', () => {
+    write(
+      'curso-0-java/lessons/01-java-hoy.md',
+      lesson('java-hoy').replace('## Idea central', '## Idea central\nUsa `jshell`.\n```java\nint a = 1;\n```'),
+    );
+
+    const [first] = compileContent(dir).lessons;
+
+    assert.match(first.html, /<h2[^>]*>Por qué importa<\/h2>/);
+    assert.match(first.html, /<code>jshell<\/code>/);
+    assert.match(first.html, /<pre><code class="language-java">int a = 1;/);
+    assert.equal('markdown' in first, false);
+  });
+
   it('reports a lesson listed in module.json but missing on disk', () => {
     rmSync(join(dir, 'curso-0-java/lessons/02-tipos.md'));
 

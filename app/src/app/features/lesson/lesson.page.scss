@@ -1,0 +1,27 @@
+h1 {
+  font-size: 1.5rem;
+  line-height: 1.25;
+  margin: 0;
+}
+
+header .meta {
+  margin: 0.25rem 0 1rem;
+}
+
+.pager {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 2rem 0 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border);
+
+  a {
+    color: var(--color-link);
+  }
+
+  .primary {
+    margin-left: auto;
+    font-weight: 600;
+  }
+}

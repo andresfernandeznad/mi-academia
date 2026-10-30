@@ -1,7 +1,7 @@
 import { parse as parseYaml } from 'yaml';
 import type { Lesson, Question, QuestionType } from '../../src/app/content/content.model.ts';
 
-export type ParsedLesson = Omit<Lesson, 'moduleId' | 'questions'>;
+export type ParsedLesson = Omit<Lesson, 'moduleId' | 'questions' | 'html'> & { markdown: string };
 
 const REQUIRED_SECTIONS = ['## Por qué importa', '## Idea central', '## Error típico', '## Fuentes'];
 const QUESTION_TYPES: QuestionType[] = ['quiz', 'find-the-bug', 'design-decision'];

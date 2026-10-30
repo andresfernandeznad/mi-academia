@@ -1,0 +1,17 @@
+h1 {
+  font-size: 1.375rem;
+  margin: 0.5rem 0;
+}
+
+.description {
+  color: var(--color-muted);
+  margin: 0 0 1rem;
+}
+
+.lessons {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+}

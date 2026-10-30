@@ -1,5 +1,6 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { marked } from 'marked';
 import type { ContentIndex, Lesson, ModuleSummary, Phase } from '../../src/app/content/content.model.ts';
 import { parseLesson, validateQuestions } from './validators.ts';
 
@@ -87,8 +88,10 @@ export function compileContent(contentDir: string): CompiledContent {
       }
 
       if (parsed.lesson && checked && checked.errors.length === 0) {
-        lessons.push({ ...parsed.lesson, moduleId: entry.id, questions: checked.questions });
-        summary.lessons.push({ id: parsed.lesson.id, title: parsed.lesson.title, minutes: parsed.lesson.minutes });
+        const { markdown, ...meta } = parsed.lesson;
+        const html = marked.parse(markdown, { async: false });
+        lessons.push({ ...meta, html, moduleId: entry.id, questions: checked.questions });
+        summary.lessons.push({ id: meta.id, title: meta.title, minutes: meta.minutes });
       }
     }
 

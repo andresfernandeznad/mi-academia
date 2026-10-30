@@ -1,0 +1,18 @@
+h1 {
+  font-size: 1.375rem;
+  margin: 0 0 1rem;
+}
+
+h2 {
+  font-size: 1rem;
+  color: var(--color-muted);
+  margin: 1.5rem 0 0.5rem;
+}
+
+.modules {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+}

@@ -42,7 +42,8 @@ export interface LessonSummary {
 export interface Lesson extends LessonSummary {
   moduleId: string;
   sources: string[];
-  markdown: string;
+  /** Lesson body, rendered from Markdown at build time. */
+  html: string;
   questions: Question[];
 }
 
