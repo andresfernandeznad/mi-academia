@@ -24,6 +24,9 @@ Además del plan original:
 - **Keepalive de Supabase.**
 - **Progreso por lección** (feature 2): lecciones completadas con ✓, barra por módulo y botón «Continuar» en el roadmap.
 - **Identidad de la PWA** (feature 3): iconos y favicon propios.
+- **Días de estudio y racha** (feature 1): racha, «X de 5 días esta semana» y los siete días marcados en el roadmap.
+
+**Congelación de features:** del 2 al 22 de noviembre no se añaden features. Solo se corrigen errores que impidan estudiar.
 
 ## Criterio de éxito (en curso)
 
@@ -31,7 +34,7 @@ Además del plan original:
 
 Periodo de prueba: del **lunes 2 de noviembre** al **domingo 22 de noviembre de 2026**.
 
-Hoy la app no mide esto por sí sola (ver la feature 1). Mientras tanto, la tabla `review_cards` de Supabase guarda `updated_at` por respuesta, así que los días con actividad se pueden consultar.
+La app lo mide sola: la tabla `study_days` guarda cada día en que respondiste algo (feature 1), y el roadmap muestra la racha y «X de 5 días esta semana». No uses `review_cards.updated_at` para esto: cada repaso pisa la fecha anterior de la tarjeta.
 
 ## Siguientes features
 
@@ -39,9 +42,7 @@ Ordenadas por prioridad. Cada una tiene un criterio de terminado verificable.
 
 ### Ahora: apoyan el criterio de éxito
 
-1. **Registro de días de estudio y racha.**
-   - **Qué:** marcar el día como estudiado al leer una lección o responder un repaso, y mostrar la racha y los días de esta semana en el roadmap.
-   - **Hecho cuando:** la app muestra «4 de 5 días esta semana» y el dato se sincroniza entre dispositivos.
+1. ~~**Registro de días de estudio y racha.**~~ Hecho el 31 de octubre de 2026. Un día cuenta como estudiado cuando respondes una pregunta, en una lección o en el repaso; abrir una lección sin responder no cuenta.
 2. ~~**Progreso por lección.**~~ Hecho el 31 de octubre de 2026. Una lección cuenta como completada cuando todas sus preguntas tienen tarjeta de repaso.
 3. ~~**Identidad de la PWA.**~~ Hecho: iconos y favicon con la mascota.
 

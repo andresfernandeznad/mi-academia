@@ -5,6 +5,8 @@ import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { indexFixture, lessonFixture } from '../../content/content.fixtures';
 import { InMemoryReviewRepository, ReviewRepository } from '../../review/review.repository';
+import { TODAY } from '../../review/today';
+import { StudyDaysService } from '../../study-days/study-days.service';
 import { LessonPage } from './lesson.page';
 
 describe('LessonPage', () => {
@@ -25,6 +27,7 @@ describe('LessonPage', () => {
     TestBed.configureTestingModule({
       providers: [
         { provide: ReviewRepository, useValue: repository },
+        { provide: TODAY, useValue: () => '2026-11-04' },
         provideRouter([{ path: 'm/:moduleId/:lessonId', component: LessonPage }], withComponentInputBinding()),
         provideHttpClient(),
         provideHttpClientTesting(),
@@ -58,6 +61,16 @@ describe('LessonPage', () => {
 
     const cards = await repository.load();
     expect(cards.map((c) => [c.questionId, c.box])).toEqual([['java-hoy-2', 2]]);
+  });
+
+  it('marks today as a study day on any answer, even to a question answered before', async () => {
+    await repository.save({ questionId: 'java-hoy-2', box: 3, due: '2026-12-01' });
+    const page = await open('curso-0-java', 'java-hoy');
+
+    (page.querySelector('button[aria-label="Línea 2"]') as HTMLButtonElement).click();
+    await harness.fixture.whenStable();
+
+    expect(TestBed.inject(StudyDaysService).allDays()).toEqual(['2026-11-04']);
   });
 
   it('links back to the module and to the next lesson only on the first lesson', async () => {

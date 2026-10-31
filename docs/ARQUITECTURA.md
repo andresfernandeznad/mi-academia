@@ -15,7 +15,7 @@ app/generated/content/*.json  ──►  ng build  ──►  GitHub Pages (PWA)
             Service worker (caché offline)           IndexedDB (progreso, fuente de verdad)
                                                                       │  SyncService (PKCE + RLS)
                                                                       ▼
-                                                        Supabase: tabla review_cards
+                                              Supabase: tablas review_cards y study_days
 ```
 
 La app no tiene backend propio: todo es estático salvo la copia del progreso en Supabase.
@@ -40,6 +40,8 @@ Angular 22: componentes standalone, signals, sin Zone.js y `OnPush`. Cada págin
 | `features/` | Páginas (contenedores): roadmap, módulo, lección, repaso (`/repaso`) y cuenta (`/cuenta`) |
 | `quiz/` | Corrección pura (`grading.ts`), tarjeta de pregunta y bloque de preguntas de la lección (presentacionales) |
 | `progress/` | Progreso por lección derivado de las tarjetas (`progress.ts`, puro) y `ProgressService` |
+| `study-days/` | Racha y semana puras (`study-days.ts`), `StudyDaysService` y el puerto `StudyDaysRepository` con sus adaptadores |
+| `storage/` | Apertura de la base IndexedDB compartida y sus versiones |
 | `review/` | Leitner puro (`leitner.ts`), `ReviewService` y el puerto `ReviewRepository` con sus adaptadores (IndexedDB y memoria) |
 | `sync/` | Merge puro (`merge.ts`), `SyncService`, `AuthService` y el puerto `RemoteReviewStore` con su adaptador Supabase |
 | `theme/` | Tema sistema, claro o noche, guardado por dispositivo y aplicado antes del primer pintado |
@@ -67,6 +69,14 @@ Así se cambia el almacenamiento sin tocar la lógica, y los tests no dependen d
 - El build añade `questionIds` a cada lección de `index.json`, así que el roadmap calcula el progreso sin cargar `questions.json`.
 - «Continuar» lleva a la primera lección no completada, en el orden del roadmap.
 - No hay tabla ni sincronización nuevas: el progreso viaja con `review_cards`.
+
+### Días de estudio
+
+- Un día cuenta como estudiado cuando respondes una pregunta, en una lección (aunque ya la hubieras respondido) o en el repaso. Abrir una lección no cuenta: no hay forma de saber si la leíste.
+- Son un **conjunto de fechas que solo crece**. Para unir dos dispositivos basta con juntar ambos conjuntos: no hace falta `updated_at` y no hay conflictos posibles.
+- La racha no se rompe hasta que acaba el día: si estudiaste ayer y hoy todavía no, sigue viva. La semana va de lunes a domingo.
+- La primera vez, el servicio recupera días a partir del `updatedAt` de las tarjetas. Es una recuperación parcial, porque cada repaso pisa la fecha anterior.
+- IndexedDB está en la **versión 2**. `onupgradeneeded` solo crea los almacenes que faltan, así que subir de versión no borra los datos. Un test abre una base v1 real y comprueba que las tarjetas siguen ahí.
 
 ### Sincronización
 
@@ -110,6 +120,7 @@ Valores medidos en la auditoría de diseño:
 | Opciones barajadas al mostrar | El contenido tendía a poner la respuesta correcta en primer lugar | Confiar en el orden del JSON |
 | Puertos para la persistencia | IndexedDB y Supabase cambian sin tocar la lógica, y los tests son rápidos | Llamar a IndexedDB desde los servicios |
 | Progreso derivado de las tarjetas de repaso | Una sola fuente de verdad: sincroniza gratis y nunca contradice al repaso | Tabla `lesson_progress` con un botón «Marcar como terminada» |
+| Días de estudio como conjunto que solo crece | La unión no tiene conflictos ni depende de los relojes | Deducirlos de `review_cards.updated_at`, que pierde días |
 | Gana la última escritura, por tarjeta | Suficiente para una persona en pocos dispositivos | Marcas temporales del servidor o CRDT |
 | PKCE en vez del flujo implícito | El token no queda en la URL ni en el historial | El valor por defecto de supabase-js |
 | Fuentes alojadas en la app | Funcionan offline, sin CDN | Google Fonts |

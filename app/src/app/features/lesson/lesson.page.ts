@@ -2,7 +2,9 @@ import { ChangeDetectionStrategy, Component, computed, inject, input } from '@an
 import { RouterLink } from '@angular/router';
 import { ContentService } from '../../content/content.service';
 import { LessonQuiz } from '../../quiz/lesson-quiz';
+import { QuestionAnswer } from '../../quiz/question-card';
 import { ReviewService } from '../../review/review.service';
+import { StudyDaysService } from '../../study-days/study-days.service';
 
 @Component({
   selector: 'app-lesson-page',
@@ -27,7 +29,7 @@ import { ReviewService } from '../../review/review.service';
         </header>
         <!-- Trusted HTML rendered from our own Markdown at build time; Angular still sanitizes it. -->
         <article class="prose" [innerHTML]="lesson.html"></article>
-        <app-lesson-quiz [questions]="lesson.questions" (answered)="reviews.recordFirstAnswer($event.questionId, $event.grade)" />
+        <app-lesson-quiz [questions]="lesson.questions" (answered)="onAnswered($event)" />
       </div>
       <nav class="pager" aria-label="Lecciones">
         <a class="button" [routerLink]="['/m', moduleId()]">Índice</a>
@@ -49,7 +51,8 @@ export class LessonPage {
   readonly lessonId = input.required<string>();
 
   private readonly content = inject(ContentService);
-  protected readonly reviews = inject(ReviewService);
+  private readonly reviews = inject(ReviewService);
+  private readonly studyDays = inject(StudyDaysService);
   protected readonly lesson = this.content.lesson(this.moduleId, this.lessonId);
 
   protected readonly module = this.content.module(this.moduleId);
@@ -59,4 +62,9 @@ export class LessonPage {
   protected readonly next = computed(() =>
     this.position() >= 0 ? this.siblings()[this.position() + 1] : undefined,
   );
+
+  /** Any answer counts as studying today, even on a lesson read before; only the first one creates a card. */
+  protected async onAnswered({ questionId, grade }: QuestionAnswer): Promise<void> {
+    await Promise.all([this.reviews.recordFirstAnswer(questionId, grade), this.studyDays.markToday()]);
+  }
 }

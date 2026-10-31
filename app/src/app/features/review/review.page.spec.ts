@@ -9,6 +9,7 @@ import { CardState } from '../../review/leitner';
 import { InMemoryReviewRepository, ReviewRepository } from '../../review/review.repository';
 import { ReviewService } from '../../review/review.service';
 import { TODAY } from '../../review/today';
+import { StudyDaysService } from '../../study-days/study-days.service';
 import { ReviewPage } from './review.page';
 
 const origin = { moduleId: 'curso-0-java', lessonId: 'java-hoy', lessonTitle: 'Java hoy' };
@@ -88,6 +89,15 @@ describe('ReviewPage', () => {
       box: 2,
       due: '2026-11-01',
     });
+  });
+
+  it('marks today as a study day when a card is rated', async () => {
+    const el = await open([{ questionId: 'q1', box: 1, due: '2026-10-30' }]);
+
+    await click(el, 'Sí');
+    await click(el, 'Fácil');
+
+    expect(TestBed.inject(StudyDaysService).allDays()).toEqual(['2026-10-30']);
   });
 
   it('only lets a wrong answer count as failed', async () => {

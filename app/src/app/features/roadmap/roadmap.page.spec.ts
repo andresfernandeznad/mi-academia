@@ -8,6 +8,9 @@ import { indexFixture } from '../../content/content.fixtures';
 import { CardState } from '../../review/leitner';
 import { InMemoryReviewRepository, ReviewRepository } from '../../review/review.repository';
 import { ReviewService } from '../../review/review.service';
+import { TODAY } from '../../review/today';
+import { InMemoryStudyDaysRepository, StudyDaysRepository } from '../../study-days/study-days.repository';
+import { StudyDaysService } from '../../study-days/study-days.service';
 import { RoadmapPage } from './roadmap.page';
 
 const answered = (...ids: string[]): CardState[] => ids.map((questionId) => ({ questionId, box: 1, due: '2026-11-01' }));
@@ -16,17 +19,21 @@ describe('RoadmapPage', () => {
   let http: HttpTestingController;
 
   /** Opens the page with these review cards stored and responds index.json with `index`. */
-  const open = async (cards: CardState[] = [], index: ContentIndex | null = indexFixture) => {
+  const open = async (cards: CardState[] = [], index: ContentIndex | null = indexFixture, days: string[] = []) => {
     TestBed.configureTestingModule({
       providers: [
         provideRouter([{ path: '', component: RoadmapPage }]),
         provideHttpClient(),
         provideHttpClientTesting(),
         { provide: ReviewRepository, useValue: new InMemoryReviewRepository(cards) },
+        { provide: StudyDaysRepository, useValue: new InMemoryStudyDaysRepository(days) },
+        // Wednesday of the first week of the trial.
+        { provide: TODAY, useValue: () => '2026-11-04' },
       ],
     });
     http = TestBed.inject(HttpTestingController);
     await TestBed.inject(ReviewService).ready;
+    await TestBed.inject(StudyDaysService).ready;
     const harness = await RouterTestingHarness.create('/');
     const request = http.expectOne('content/index.json');
     if (index) request.flush(index);
@@ -89,6 +96,25 @@ describe('RoadmapPage', () => {
     const page = await open(answered('java-hoy-1', 'java-hoy-2', 'tipos-1', 'tipos-2'));
 
     expect(page.querySelector('a.continue')).toBeNull();
+  });
+
+  it('shows the streak and the study days of this week', async () => {
+    const page = await open([], indexFixture, ['2026-11-02', '2026-11-03', '2026-11-04']);
+
+    expect(page.querySelector('.study-summary')?.textContent?.replace(/\s+/g, ' ').trim()).toBe(
+      'Racha: 3 días · 3 de 5 días esta semana',
+    );
+    const days = Array.from(page.querySelectorAll('.week li'));
+    expect(days.map((d) => d.classList.contains('studied'))).toEqual([true, true, true, false, false, false, false]);
+    expect(days.map((d) => d.classList.contains('today'))).toEqual([false, false, true, false, false, false, false]);
+    expect(days[0].getAttribute('aria-label')).toBe('Lunes: estudiado');
+    expect(days[3].getAttribute('aria-label')).toBe('Jueves: sin estudiar');
+  });
+
+  it('pluralizes a one-day streak', async () => {
+    const page = await open([], indexFixture, ['2026-11-04']);
+
+    expect(page.querySelector('.study-summary')?.textContent).toContain('Racha: 1 día ·');
   });
 
   it('shows an error message when the content cannot be loaded', async () => {

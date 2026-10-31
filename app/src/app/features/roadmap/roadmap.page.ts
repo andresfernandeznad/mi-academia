@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { RouterLink } from '@angular/router';
 import { ContentService } from '../../content/content.service';
 import { ProgressService } from '../../progress/progress.service';
+import { StudyDaysService } from '../../study-days/study-days.service';
 
 @Component({
   selector: 'app-roadmap-page',
@@ -22,6 +23,24 @@ import { ProgressService } from '../../progress/progress.service';
             <span class="continue-title">{{ next.lesson.title }}</span>
           </a>
         }
+
+        <div class="study">
+          <p class="study-summary meta">
+            Racha: {{ studyDays.streak() }} {{ studyDays.streak() === 1 ? 'día' : 'días' }} ·
+            {{ studyDays.studiedThisWeek() }} de {{ weeklyGoal }} días esta semana
+          </p>
+          <ol class="week">
+            @for (day of studyDays.week(); track day.day; let i = $index) {
+              <li
+                [class.studied]="day.studied"
+                [class.today]="day.isToday"
+                [attr.aria-label]="weekDayNames[i] + ': ' + (day.studied ? 'estudiado' : 'sin estudiar')"
+              >
+                <span aria-hidden="true">{{ weekDayLetters[i] }}</span>
+              </li>
+            }
+          </ol>
+        </div>
 
         @for (phase of index.phases; track phase.id; let p = $index) {
           <section>
@@ -68,6 +87,13 @@ import { ProgressService } from '../../progress/progress.service';
 export class RoadmapPage {
   protected readonly content = inject(ContentService);
   protected readonly progress = inject(ProgressService);
+  protected readonly studyDays = inject(StudyDaysService);
+
+  /** The success criterion: study at least 5 days a week. */
+  protected readonly weeklyGoal = 5;
+  protected readonly weekDayNames = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+  // "X" is the usual abbreviation for miércoles in Spanish calendars, so it is not confused with martes.
+  protected readonly weekDayLetters = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
 
   protected readonly totals = computed(() => {
     const modules = this.content.index.value()?.phases.flatMap((phase) => phase.modules) ?? [];

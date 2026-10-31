@@ -8,6 +8,7 @@ para compartirlo entre dispositivos. Todo es del plan gratuito.
 1. Crea un proyecto en <https://supabase.com/dashboard> (región europea, p. ej. Frankfurt).
 2. **SQL Editor** → pega y ejecuta [`supabase/migrations/20261030000000_review_cards.sql`](../supabase/migrations/20261030000000_review_cards.sql).
    Crea la tabla `review_cards` con Row Level Security: cada usuario solo ve sus filas.
+3. Ejecuta también [`supabase/migrations/20261031000000_study_days.sql`](../supabase/migrations/20261031000000_study_days.sql): la tabla `study_days`, con las mismas reglas.
 
 ## 2. App OAuth de GitHub
 

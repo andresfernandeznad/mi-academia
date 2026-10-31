@@ -1,6 +1,7 @@
 import { Component, computed, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { ReviewService } from './review/review.service';
+import { StudyDaysService } from './study-days/study-days.service';
 import { ThemePreference, ThemeService } from './theme/theme.service';
 import { SyncService } from './sync/sync.service';
 import { UpdateService } from './update/update.service';
@@ -20,6 +21,7 @@ const NEXT_THEME: Record<ThemePreference, ThemePreference> = { system: 'light', 
 })
 export class App {
   protected readonly reviews = inject(ReviewService);
+  private readonly studyDays = inject(StudyDaysService);
   protected readonly updates = inject(UpdateService);
   /** Injected here so sync starts with the app, not when the account page is first opened. */
   private readonly sync = inject(SyncService);
@@ -35,6 +37,7 @@ export class App {
   protected onVisible(): void {
     if (document.visibilityState !== 'visible') return;
     this.reviews.refreshToday();
+    this.studyDays.refreshToday();
     void this.updates.check();
     this.sync.syncSoon();
   }

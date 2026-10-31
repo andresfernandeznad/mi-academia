@@ -4,6 +4,9 @@ import { CardState } from '../review/leitner';
 import { InMemoryReviewRepository, ReviewRepository } from '../review/review.repository';
 import { ReviewService } from '../review/review.service';
 import { NOW, TODAY } from '../review/today';
+import { InMemoryStudyDaysRepository, StudyDaysRepository } from '../study-days/study-days.repository';
+import { StudyDaysService } from '../study-days/study-days.service';
+import { RemoteStudyDaysStore } from './remote-study-days-store';
 import { AccountUser, AuthService } from './auth.service';
 import { RemoteReviewStore } from './remote-review-store';
 import { SYNC_DELAY_MS, SyncService } from './sync.service';
@@ -27,22 +30,38 @@ class FakeRemote extends RemoteReviewStore {
   }
 }
 
-const me: AccountUser = { id: 'u1', login: 'andres', avatarUrl: null };
+class FakeRemoteDays extends RemoteStudyDaysStore {
+  days = new Set<string>();
+
+  async fetchAll(): Promise<string[]> {
+    return [...this.days];
+  }
+
+  async insert(_userId: string, days: string[]): Promise<void> {
+    for (const day of days) this.days.add(day);
+  }
+}
+
+const me: AccountUser ={ id: 'u1', login: 'andres', avatarUrl: null };
 const settle = () => new Promise((resolve) => setTimeout(resolve, 20));
 
 describe('SyncService', () => {
   let remote: FakeRemote;
+  let remoteDays: FakeRemoteDays;
   let user: ReturnType<typeof signal<AccountUser | null>>;
   let repository: InMemoryReviewRepository;
 
-  const create = async (localCards: CardState[] = []) => {
+  const create = async (localCards: CardState[] = [], localDays: string[] = []) => {
     remote = new FakeRemote();
+    remoteDays = new FakeRemoteDays();
     user = signal<AccountUser | null>(null);
     repository = new InMemoryReviewRepository(localCards);
     TestBed.configureTestingModule({
       providers: [
         { provide: ReviewRepository, useValue: repository },
+        { provide: StudyDaysRepository, useValue: new InMemoryStudyDaysRepository(localDays) },
         { provide: RemoteReviewStore, useValue: remote },
+        { provide: RemoteStudyDaysStore, useValue: remoteDays },
         { provide: AuthService, useValue: { configured: signal(true), user } },
         { provide: TODAY, useValue: () => '2026-10-30' },
         { provide: NOW, useValue: () => '2026-10-30T12:00:00.000Z' },
@@ -51,6 +70,7 @@ describe('SyncService', () => {
     });
     const sync = TestBed.inject(SyncService);
     await TestBed.inject(ReviewService).ready;
+    await TestBed.inject(StudyDaysService).ready;
     TestBed.tick();
     return sync;
   };
@@ -96,6 +116,27 @@ describe('SyncService', () => {
     await settle();
 
     expect(remote.rows.get('q9')).toMatchObject({ box: 2, updatedAt: '2026-10-30T12:00:00.000Z' });
+  });
+
+  it('merges study days both ways when the learner signs in', async () => {
+    await create([], ['2026-10-29']);
+    remoteDays.days.add('2026-10-28');
+
+    await signIn();
+
+    expect([...remoteDays.days].sort()).toEqual(['2026-10-28', '2026-10-29']);
+    expect(TestBed.inject(StudyDaysService).allDays().sort()).toEqual(['2026-10-28', '2026-10-29']);
+  });
+
+  it('uploads a study day marked after signing in', async () => {
+    await create([], ['2026-10-29']);
+    await signIn();
+
+    await TestBed.inject(StudyDaysService).markToday();
+    TestBed.tick();
+    await settle();
+
+    expect(remoteDays.days.has('2026-10-30')).toBe(true);
   });
 
   it('does not upload again what it just downloaded', async () => {

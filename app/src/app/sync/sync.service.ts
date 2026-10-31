@@ -1,9 +1,12 @@
 import { DestroyRef, Injectable, InjectionToken, effect, inject, signal, untracked } from '@angular/core';
 import { ReviewService } from '../review/review.service';
 import { NOW } from '../review/today';
+import { mergeDays } from '../study-days/study-days';
+import { StudyDaysService } from '../study-days/study-days.service';
 import { AuthService } from './auth.service';
 import { mergeCards } from './merge';
 import { RemoteReviewStore } from './remote-review-store';
+import { RemoteStudyDaysStore } from './remote-study-days-store';
 
 export type SyncStatus = 'disabled' | 'signed-out' | 'syncing' | 'synced' | 'offline' | 'error';
 
@@ -19,6 +22,8 @@ export class SyncService {
   private readonly auth = inject(AuthService);
   private readonly remote = inject(RemoteReviewStore);
   private readonly reviews = inject(ReviewService);
+  private readonly remoteDays = inject(RemoteStudyDaysStore);
+  private readonly studyDays = inject(StudyDaysService);
   private readonly now = inject(NOW);
   private readonly delay = inject(SYNC_DELAY_MS);
 
@@ -41,6 +46,7 @@ export class SyncService {
     let firstRun = true;
     effect(() => {
       this.reviews.localChanges();
+      this.studyDays.localChanges();
       if (firstRun) {
         firstRun = false;
         return;
@@ -92,6 +98,11 @@ export class SyncService {
       const { toUpload, toStore } = mergeCards(this.reviews.allCards(), await this.remote.fetchAll(user.id));
       await this.reviews.applyRemote(toStore);
       await this.remote.upsert(user.id, toUpload);
+
+      await this.studyDays.ready;
+      const days = mergeDays(new Set(this.studyDays.allDays()), await this.remoteDays.fetchAll(user.id));
+      await this.studyDays.applyRemote(days.toStore);
+      await this.remoteDays.insert(user.id, days.toUpload);
       this.lastSyncedAt.set(this.now());
       this.status.set('synced');
     } catch {

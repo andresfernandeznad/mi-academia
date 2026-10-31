@@ -5,6 +5,7 @@ import { Grade } from '../../quiz/grading';
 import { QuestionCard } from '../../quiz/question-card';
 import { Rating } from '../../review/leitner';
 import { ReviewService } from '../../review/review.service';
+import { StudyDaysService } from '../../study-days/study-days.service';
 
 interface RatingOption {
   rating: Rating;
@@ -64,6 +65,7 @@ const RATINGS: Record<Grade, RatingOption[]> = {
 })
 export class ReviewPage {
   private readonly reviews = inject(ReviewService);
+  private readonly studyDays = inject(StudyDaysService);
   protected readonly questions = inject(ContentService).reviewQuestions();
   protected readonly ratings = RATINGS;
 
@@ -89,7 +91,7 @@ export class ReviewPage {
   }
 
   protected async rate(questionId: string, rating: Rating): Promise<void> {
-    await this.reviews.rate(questionId, rating);
+    await Promise.all([this.reviews.rate(questionId, rating), this.studyDays.markToday()]);
   }
 }
 

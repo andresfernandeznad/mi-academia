@@ -25,6 +25,48 @@
   font-size: 1rem;
 }
 
+.study {
+  margin-top: 20px;
+}
+
+.study-summary {
+  margin: 0 0 8px;
+}
+
+// Seven squares, Monday to Sunday: filled when studied, outlined in ink for today.
+.week {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  max-width: 20rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 1;
+    border: 1px solid var(--border);
+    background: var(--inset);
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+  }
+
+  .studied {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: var(--on-accent);
+    font-weight: 600;
+  }
+
+  .today {
+    outline: 2px solid var(--ink);
+    outline-offset: 1px;
+  }
+}
+
 .row .bar {
   margin-top: 6px;
 }
