@@ -92,7 +92,12 @@ export function compileContent(contentDir: string): CompiledContent {
         const { markdown, ...meta } = parsed.lesson;
         const html = marked.parse(markdown, { async: false });
         lessons.push({ ...meta, html, moduleId: entry.id, questions: checked.questions });
-        summary.lessons.push({ id: meta.id, title: meta.title, minutes: meta.minutes });
+        summary.lessons.push({
+          id: meta.id,
+          title: meta.title,
+          minutes: meta.minutes,
+          questionIds: checked.questions.map((q) => q.id),
+        });
       }
     }
 

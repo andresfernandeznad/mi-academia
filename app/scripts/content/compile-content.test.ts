@@ -84,6 +84,12 @@ describe('compileContent', () => {
     assert.deepEqual(http.lessons, []);
   });
 
+  it('lists the question ids of each lesson in the index, to derive progress', () => {
+    const { index } = compileContent(dir);
+
+    assert.deepEqual(index.phases[0].modules[0].lessons[1].questionIds, ['tipos-1', 'tipos-2', 'tipos-3']);
+  });
+
   it('returns full lessons with their questions', () => {
     const { lessons } = compileContent(dir);
 

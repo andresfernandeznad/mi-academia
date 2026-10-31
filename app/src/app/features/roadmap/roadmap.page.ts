@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ContentService } from '../../content/content.service';
+import { ProgressService } from '../../progress/progress.service';
 
 @Component({
   selector: 'app-roadmap-page',
@@ -15,6 +16,13 @@ import { ContentService } from '../../content/content.service';
         <h1 class="page-title">{{ index.title }}</h1>
         <p class="summary meta">{{ totals().modules }} módulos, {{ totals().hours }} horas estimadas</p>
 
+        @if (progress.next(); as next) {
+          <a class="button primary continue" [routerLink]="['/m', next.module.id, next.lesson.id]">
+            <span class="continue-label">Continuar</span>
+            <span class="continue-title">{{ next.lesson.title }}</span>
+          </a>
+        }
+
         @for (phase of index.phases; track phase.id; let p = $index) {
           <section>
             <h2>{{ phase.title }}</h2>
@@ -22,12 +30,16 @@ import { ContentService } from '../../content/content.service';
               @for (module of phase.modules; track module.id; let m = $index) {
                 <li>
                   @if (module.available) {
+                    @let done = progress.ofModule(module);
                     <a class="row" [routerLink]="['/m', module.id]">
                       <span class="index">{{ p }}.{{ m + 1 }}</span>
                       <span>
                         <span class="title">{{ module.title }}</span>
                         <span class="sub">
-                          {{ module.lessons.length }} {{ module.lessons.length === 1 ? 'lección' : 'lecciones' }}
+                          {{ done.done }} de {{ done.total }} {{ done.total === 1 ? 'lección' : 'lecciones' }}
+                        </span>
+                        <span class="bar" aria-hidden="true">
+                          <span class="bar-fill" [style.width.%]="(done.done / done.total) * 100"></span>
                         </span>
                       </span>
                       <span class="aside">{{ module.hours }} h</span>
@@ -55,6 +67,7 @@ import { ContentService } from '../../content/content.service';
 })
 export class RoadmapPage {
   protected readonly content = inject(ContentService);
+  protected readonly progress = inject(ProgressService);
 
   protected readonly totals = computed(() => {
     const modules = this.content.index.value()?.phases.flatMap((phase) => phase.modules) ?? [];

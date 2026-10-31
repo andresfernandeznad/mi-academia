@@ -39,6 +39,7 @@ Angular 22: componentes standalone, signals, sin Zone.js y `OnPush`. Cada págin
 | `content/` | `ContentService`: carga el JSON compilado con `httpResource`, con URLs relativas al `base href` |
 | `features/` | Páginas (contenedores): roadmap, módulo, lección, repaso (`/repaso`) y cuenta (`/cuenta`) |
 | `quiz/` | Corrección pura (`grading.ts`), tarjeta de pregunta y bloque de preguntas de la lección (presentacionales) |
+| `progress/` | Progreso por lección derivado de las tarjetas (`progress.ts`, puro) y `ProgressService` |
 | `review/` | Leitner puro (`leitner.ts`), `ReviewService` y el puerto `ReviewRepository` con sus adaptadores (IndexedDB y memoria) |
 | `sync/` | Merge puro (`merge.ts`), `SyncService`, `AuthService` y el puerto `RemoteReviewStore` con su adaptador Supabase |
 | `theme/` | Tema sistema, claro o noche, guardado por dispositivo y aplicado antes del primer pintado |
@@ -59,6 +60,13 @@ Así se cambia el almacenamiento sin tocar la lógica, y los tests no dependen d
 - Solo la **primera** respuesta en una lección crea la tarjeta. Releer una lección no mueve nada.
 - En el repaso, una respuesta autocorregida incorrecta solo se puede marcar como «Fallado».
 - Las fechas son días de calendario locales (`"YYYY-MM-DD"`); la aritmética se hace en UTC para que el cambio de hora no afecte.
+
+### Progreso por lección
+
+- **No se guarda, se deriva.** Una lección está completada cuando todas sus preguntas tienen tarjeta de repaso, porque la primera respuesta en la lección es la que crea la tarjeta.
+- El build añade `questionIds` a cada lección de `index.json`, así que el roadmap calcula el progreso sin cargar `questions.json`.
+- «Continuar» lleva a la primera lección no completada, en el orden del roadmap.
+- No hay tabla ni sincronización nuevas: el progreso viaja con `review_cards`.
 
 ### Sincronización
 
@@ -101,6 +109,7 @@ Valores medidos en la auditoría de diseño:
 | Leitner de 5 cajas | Encaja con fácil, dudoso o fallado; es simple y fácil de razonar | SM-2 (más complejo para pocas preguntas) |
 | Opciones barajadas al mostrar | El contenido tendía a poner la respuesta correcta en primer lugar | Confiar en el orden del JSON |
 | Puertos para la persistencia | IndexedDB y Supabase cambian sin tocar la lógica, y los tests son rápidos | Llamar a IndexedDB desde los servicios |
+| Progreso derivado de las tarjetas de repaso | Una sola fuente de verdad: sincroniza gratis y nunca contradice al repaso | Tabla `lesson_progress` con un botón «Marcar como terminada» |
 | Gana la última escritura, por tarjeta | Suficiente para una persona en pocos dispositivos | Marcas temporales del servidor o CRDT |
 | PKCE en vez del flujo implícito | El token no queda en la URL ni en el historial | El valor por defecto de supabase-js |
 | Fuentes alojadas en la app | Funcionan offline, sin CDN | Google Fonts |

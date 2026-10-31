@@ -4,31 +4,44 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { indexFixture } from '../../content/content.fixtures';
+import { CardState } from '../../review/leitner';
+import { InMemoryReviewRepository, ReviewRepository } from '../../review/review.repository';
+import { ReviewService } from '../../review/review.service';
 import { ModulePage } from './module.page';
+
+const answered = (...ids: string[]): CardState[] => ids.map((questionId) => ({ questionId, box: 1, due: '2026-11-01' }));
 
 describe('ModulePage', () => {
   let harness: RouterTestingHarness;
   let http: HttpTestingController;
 
-  const open = async (url: string) => {
+  const open = async (url: string, cards: CardState[] = []) => {
+    TestBed.configureTestingModule({
+      providers: [
+        provideRouter([{ path: 'm/:moduleId', component: ModulePage }], withComponentInputBinding()),
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        { provide: ReviewRepository, useValue: new InMemoryReviewRepository(cards) },
+      ],
+    });
+    http = TestBed.inject(HttpTestingController);
+    await TestBed.inject(ReviewService).ready;
     harness = await RouterTestingHarness.create(url);
     http.expectOne('content/index.json').flush(indexFixture);
     await harness.fixture.whenStable();
     return harness.routeNativeElement!;
   };
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      providers: [
-        provideRouter([{ path: 'm/:moduleId', component: ModulePage }], withComponentInputBinding()),
-        provideHttpClient(),
-        provideHttpClientTesting(),
-      ],
-    });
-    http = TestBed.inject(HttpTestingController);
-  });
-
   afterEach(() => http.verify());
+
+  it('marks completed lessons and shows the module progress', async () => {
+    const page = await open('/m/curso-0-java', answered('java-hoy-1', 'java-hoy-2', 'tipos-1'));
+
+    const rows = Array.from(page.querySelectorAll('ol a.row'));
+    expect(rows.map((row) => row.classList.contains('done'))).toEqual([true, false]);
+    expect(rows[0].textContent).toContain('Completada');
+    expect(page.querySelector('.progress-label')?.textContent?.trim()).toBe('1 de 2 lecciones completadas');
+  });
 
   it('shows the module title, description and lessons in order', async () => {
     const page = await open('/m/curso-0-java');

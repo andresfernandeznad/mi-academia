@@ -37,9 +37,11 @@ export interface LessonSummary {
   id: string;
   title: string;
   minutes: number;
+  /** A lesson counts as completed once every one of these questions has a review card. */
+  questionIds: string[];
 }
 
-export interface Lesson extends LessonSummary {
+export interface Lesson extends Omit<LessonSummary, 'questionIds'> {
   moduleId: string;
   sources: string[];
   /** Lesson body, rendered from Markdown at build time. */

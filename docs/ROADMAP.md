@@ -22,6 +22,8 @@ Además del plan original:
 - **Rediseño visual con modo noche** y una auditoría de contraste, legibilidad y áreas táctiles.
 - **Aviso de versión nueva.**
 - **Keepalive de Supabase.**
+- **Progreso por lección** (feature 2): lecciones completadas con ✓, barra por módulo y botón «Continuar» en el roadmap.
+- **Identidad de la PWA** (feature 3): iconos y favicon propios.
 
 ## Criterio de éxito (en curso)
 
@@ -40,12 +42,8 @@ Ordenadas por prioridad. Cada una tiene un criterio de terminado verificable.
 1. **Registro de días de estudio y racha.**
    - **Qué:** marcar el día como estudiado al leer una lección o responder un repaso, y mostrar la racha y los días de esta semana en el roadmap.
    - **Hecho cuando:** la app muestra «4 de 5 días esta semana» y el dato se sincroniza entre dispositivos.
-2. **Progreso por lección.**
-   - **Qué:** marcar las lecciones completadas (leídas y con las preguntas respondidas), mostrarlo en el módulo y ofrecer «continuar donde lo dejaste».
-   - **Hecho cuando:** al abrir la app, el primer botón lleva a la siguiente lección pendiente.
-3. **Identidad de la PWA.**
-   - **Qué:** iconos y favicon propios; ahora mismo siguen siendo los de Angular.
-   - **Hecho cuando:** el icono instalado en el móvil es el de Mi Academia, en todas sus variantes.
+2. ~~**Progreso por lección.**~~ Hecho el 31 de octubre de 2026. Una lección cuenta como completada cuando todas sus preguntas tienen tarjeta de repaso.
+3. ~~**Identidad de la PWA.**~~ Hecho: iconos y favicon con la mascota.
 
 ### Después del criterio de éxito (del diseño)
 
@@ -66,7 +64,6 @@ Ordenadas por prioridad. Cada una tiene un criterio de terminado verificable.
 
 | Tema | Impacto | Propuesta |
 | --- | --- | --- |
-| Iconos y favicon por defecto de Angular | Identidad en el móvil | Feature 3 |
 | La sincronización usa los relojes de cada dispositivo («gana la última escritura»); se observaron unos 30 s de desfase | Un conflicto entre dos dispositivos con segundos de diferencia puede resolverse mal | Asignar `updated_at` en el servidor con un trigger y un contador de versión |
 | Los proyectos Java no se compilan en CI | Un cambio en un test o una firma podría romper el enunciado sin que nadie lo note | Workflow que haga `mvn test-compile` del esqueleto |
 | Los fragmentos de código de las lecciones 02 a 11 usan nombres en español; la regla dice código en inglés | Inconsistencia con el proyecto CLI (en inglés) | Decidir la convención y, si toca, pasarlos al inglés |

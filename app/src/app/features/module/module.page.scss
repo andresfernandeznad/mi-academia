@@ -3,3 +3,15 @@
   margin: 12px 0 28px;
   color: var(--muted);
 }
+
+.progress {
+  margin-bottom: 20px;
+}
+
+.progress-label {
+  margin: 0 0 8px;
+}
+
+.row.done .index {
+  color: var(--correct);
+}

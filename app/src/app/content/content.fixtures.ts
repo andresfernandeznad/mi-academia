@@ -14,8 +14,8 @@ export const indexFixture: ContentIndex = {
           available: true,
           description: 'Repaso de Java moderno.',
           lessons: [
-            { id: 'java-hoy', title: 'Java hoy', minutes: 8 },
-            { id: 'tipos', title: 'Tipos y texto', minutes: 7 },
+            { id: 'java-hoy', title: 'Java hoy', minutes: 8, questionIds: ['java-hoy-1', 'java-hoy-2'] },
+            { id: 'tipos', title: 'Tipos y texto', minutes: 7, questionIds: ['tipos-1', 'tipos-2'] },
           ],
         },
       ],
